@@ -1,21 +1,49 @@
+import os
 import flet as ft
+import importlib
 
-class MainApp:
-    def main(self, page: ft.Page):
-        page.expand = True
-        page.padding = 0
-        page.vertical_alignment = "center"
-        page.horizontal_alignment = "center"
-        page.theme_mode = ft.ThemeMode.SYSTEM
-        page.window.min_width = 1400
-        page.window.min_height = 800
-        page.window.maximized = True
-        # Puedes añadir más elementos a la página aquí
-        page.update()
+
+class TheMagicCardApp:
+    def __init__(self, page: ft.Page):
+        self.page = page
+        self.installation_path = r"C:\Program Files (x86)\The Magic Card"  # Ruta de instalación
+        
+        # Configuración de la ventana
+        self.page.expand = True
+        self.page.padding = 0
+        self.page.vertical_alignment = "center"
+        self.page.horizontal_alignment = "center"
+        self.page.theme_mode = ft.ThemeMode.SYSTEM
+        self.page.window.maximized = True  # Maximiza la ventana al iniciarse
+        self.page.update()  # Aplica los cambios de la configuración
+
+    def run(self):
+        # Verificar si la carpeta de instalación existe
+        if not self._is_installed():
+            self._load_installation_page()
+        else:
+            self._load_login_page()
+
+    def _is_installed(self):
+        # Método privado para verificar si la carpeta de instalación existe
+        return os.path.exists(self.installation_path)
+
+    def _load_installation_page(self):
+        # Método privado para cargar el módulo de instalación
+        install_module = importlib.import_module("unit.install")
+        install_module.InstallPage(self.page).show()  # Instanciamos la clase y llamamos al método `show()`
+
+    def _load_login_page(self):
+        # Método privado para cargar el módulo de login
+        login_module = importlib.import_module("login")
+        login_module.LoginPage(self.page).show()  # Instanciamos la clase y llamamos al método `show()`
+
+def main(page: ft.Page):
+    app = TheMagicCardApp(page)
+    app.run()  # Ejecuta la aplicación principal
 
 if __name__ == "__main__":
-    app = MainApp()
-    ft.app(target=app.main)
+    ft.app(target=main)
     
 # import flet as ft
 # import shutil
