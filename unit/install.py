@@ -21,17 +21,6 @@ class InstallPage:
         if not os.path.exists(path):
             self.version = "Versión desconocida"
             print("El archivo version.txt no existe en la ruta especificada.")
-            print("Archivos en el directorio actual:")
-            print(os.listdir(os.getcwd()))  # Listar archivos en el directorio actual
-            
-            # Generar version.txt manualmente para diagnóstico
-            try:
-                with open(path, "w") as file:
-                    file.write("v1.0.0")  # Escribe una versión de ejemplo
-                print("Archivo version.txt generado manualmente.")
-                self.version = "v1.0.0"
-            except Exception as e:
-                print(f"Error al crear version.txt: {e}")
         else:
             with open(path, "r") as file:
                 self.version = file.read().strip()

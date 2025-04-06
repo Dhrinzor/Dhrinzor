@@ -18,6 +18,7 @@ jobs:
           release_name: ${{ github.ref_name }}
           draft: false
           prerelease: false
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Guardar la versión en archivo
         run: echo "${{ github.ref_name }}" > version.txt
