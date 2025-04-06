@@ -1,3 +1,4 @@
+import subprocess
 import os
 import flet as ft
 import importlib
@@ -18,11 +19,27 @@ class TheMagicCardApp:
         self.page.update()  # Aplica los cambios de la configuración
 
     def run(self):
+        # Ejecutar la sincronización en segundo plano
+        self._sync_repository()
+
         # Verificar si la carpeta de instalación existe
         if not self._is_installed():
             self._load_installation_page()
         else:
             self._load_login_page()
+
+    def _sync_repository(self):
+        # Ruta del archivo .bat
+        bat_file_path = os.path.join(os.getcwd(), "sync_version.bat")
+        if os.path.exists(bat_file_path):
+            try:
+                # Ejecutar el archivo .bat en segundo plano
+                subprocess.Popen(bat_file_path, shell=True)
+                print("Sincronización con GitHub iniciada en segundo plano.")
+            except Exception as e:
+                print(f"Error al ejecutar el archivo .bat: {e}")
+        else:
+            print(f"El archivo {bat_file_path} no existe.")
 
     def _is_installed(self):
         # Método privado para verificar si la carpeta de instalación existe
@@ -38,9 +55,11 @@ class TheMagicCardApp:
         login_module = importlib.import_module("login")
         login_module.LoginPage(self.page).show()  # Instanciamos la clase y llamamos al método `show()`
 
+
 def main(page: ft.Page):
     app = TheMagicCardApp(page)
     app.run()  # Ejecuta la aplicación principal
+
 
 if __name__ == "__main__":
     ft.app(target=main)

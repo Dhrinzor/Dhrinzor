@@ -9,6 +9,9 @@ class InstallPage:
         self.checkbox_instalar = ft.Checkbox(
             label="Bienvenido", value=False, fill_color="white", disabled=True
         )
+        self.checkbox_license = ft.Checkbox(
+            label="Registrar", value=False, fill_color="white", disabled=True
+        )
         self.checkbox_registrar = ft.Checkbox(
             label="Registrar", value=False, fill_color="white", disabled=True
         )
@@ -63,6 +66,7 @@ class InstallPage:
                     titulo_checkboxes,  # El título centrado
                     divisor,            # El divisor
                     self.checkbox_instalar,
+                    self.checkbox_license,
                     self.checkbox_registrar,
                     checkbox_herramientas,
                     checkbox_preferencias,
@@ -77,9 +81,9 @@ class InstallPage:
         # Sección derecha vacía por ahora
         self.right_section = ft.Container(
             expand=True,
-            bgcolor="white",
+            bgcolor=ft.Colors.BLUE,
             border_radius=10,
-            padding=30,
+            #padding=30,
         )
 
         # Layout principal
