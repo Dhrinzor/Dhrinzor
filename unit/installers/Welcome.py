@@ -54,6 +54,11 @@ class PageContent:
                     ft.TextButton("Añadir Usuario", icon=ft.icons.PERSON_ADD),
                     ft.TextButton("Editar Usuario", icon=ft.icons.EDIT),
                     ft.Divider(height=20, thickness=1),
+                    ft.ElevatedButton(
+                    text="Continuar",
+                    on_click=lambda _: self.actualizar_checkboxes,
+                ),
+            
                 ]
             )
         )
