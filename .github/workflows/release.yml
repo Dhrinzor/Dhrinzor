@@ -1,0 +1,28 @@
+name: Crear versión con documentación
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  release_with_docs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Configurar repositorio
+        uses: actions/checkout@v2
+
+      - name: Generar documentación
+        run: |
+          echo "Generando documentación..."
+          touch docs.md
+
+      - name: Crear versión con documentación
+        uses: actions/create-release@v1
+        with:
+          tag_name: ${{ github.ref_name }}
+          release_name: ${{ github.ref_name }}
+          body: |
+            La documentación ha sido generada:
+            - Archivo: docs.md
+          draft: false
+          prerelease: false
