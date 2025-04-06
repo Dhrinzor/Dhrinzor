@@ -11,8 +11,6 @@ jobs:
       # Configurar repositorio
       - name: Configurar repositorio
         uses: actions/checkout@v3
-        with:
-          ref: main  # Asegúrate de usar la rama principal (o específica)
 
       # Crear una nueva versión en GitHub directamente
       - name: Crear versión en GitHub
@@ -27,9 +25,11 @@ jobs:
           echo "Archivo version.txt generado con contenido:"
           cat version.txt
 
-      # Configurar rama para evitar HEAD separado
-      - name: Configurar Git en una rama
-        run: git checkout -b temp-branch
+      # Configurar Git para operar en una rama específica
+      - name: Configurar rama principal
+        run: |
+          git checkout -B main
+          git push --set-upstream origin main
 
       # Hacer commit del archivo version.txt
       - name: Commit de version.txt
@@ -38,6 +38,10 @@ jobs:
           commit_message: "Actualizando archivo version.txt a la versión ${{ github.ref_name }}"
           file_pattern: version.txt
 
-      # Hacer push del archivo version.txt
-      - name: Push del archivo version.txt
-        run: git push origin temp-branch
+      # Verificar el estado del directorio final
+      - name: Verificar directorio final
+        run: |
+          echo "Directorio actual:"
+          pwd
+          echo "Archivos presentes en el directorio actual:"
+          ls -al
