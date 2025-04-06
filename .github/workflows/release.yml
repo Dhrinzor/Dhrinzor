@@ -8,9 +8,15 @@ jobs:
   release:
     runs-on: ubuntu-latest
     steps:
+      # Configurar el repositorio
       - name: Configurar repositorio
         uses: actions/checkout@v3
 
+      # Instalar GitHub CLI
+      - name: Instalar GitHub CLI
+        run: sudo apt-get update && sudo apt-get install -y gh
+
+      # Crear una nueva versión en GitHub usando GitHub CLI
       - name: Crear versión en GitHub
         run: |
           echo "${{ secrets.GITHUB_TOKEN }}" | gh auth login --with-token
@@ -18,18 +24,30 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Guardar la versión en archivo
-        run: echo "${{ github.ref_name }}" > version.txt
+      # Guardar la versión en archivo
+      - name: Guardar la versión en archivo version.txt
+        run: |
+          echo "${{ github.ref_name }}" > $GITHUB_WORKSPACE/version.txt
+          echo "Archivo version.txt generado con contenido:"
+          cat $GITHUB_WORKSPACE/version.txt
 
+      # Verificar que el archivo version.txt se generó correctamente
+      - name: Verificar contenido del archivo version.txt
+        run: |
+          echo "Contenido del archivo version.txt (diagnóstico):"
+          cat $GITHUB_WORKSPACE/version.txt || echo "El archivo version.txt no fue generado correctamente."
+
+      # Hacer commit del archivo version.txt
       - name: Commit de version.txt
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
-          commit_message: Actualizar archivo version.txt con la última versión
+          commit_message: "Actualizando archivo version.txt a la versión ${{ github.ref_name }}"
           file_pattern: version.txt
 
-      - name: Verificar directorio y contenido de archivos
+      # Verificar el estado del directorio final
+      - name: Verificar directorio final
         run: |
+          echo "Directorio actual:"
+          pwd
           echo "Archivos presentes en el directorio actual:"
-          ls
-          echo "Contenido de version.txt:"
-          cat version.txt || echo "version.txt no se generó."
+          ls -al
