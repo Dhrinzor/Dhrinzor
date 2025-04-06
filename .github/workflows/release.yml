@@ -33,4 +33,7 @@ jobs:
         with:
           name: version
           path: version.txt
+
+      - name: Verificar archivos generados
+        run: ls
           
