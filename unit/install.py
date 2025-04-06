@@ -12,10 +12,15 @@ class InstallPage:
         self.checkbox_license = ft.Checkbox(
             label="Licencia", value=False, fill_color="white", disabled=True
         )
-        self.checkbox_registrar = ft.Checkbox(
+        self.checkbox_business_name = ft.Checkbox(
             label="Registrar Negocio", value=False, fill_color="white", disabled=True
         )
-
+        self.checkbox_herramientas = ft.Checkbox(
+            label="Instalar herramientas", value=False, fill_color="white", disabled=True
+        )
+        self.checkbox_preferencias = ft.Checkbox(
+            label="Preferencias", value=False, fill_color="white", disabled=True
+        )
         # Ruta absoluta para version.txt
         path = r"D:\APP\the magic card program\version.txt"
 
@@ -34,14 +39,6 @@ class InstallPage:
         self.page.horizontal_alignment = "center"
         self.page.vertical_alignment = "center"
         self.page.padding = 150
-
-        # Define los checkboxes adicionales
-        checkbox_herramientas = ft.Checkbox(
-            label="Instalar herramientas", value=False, fill_color="white", disabled=True
-        )
-        checkbox_preferencias = ft.Checkbox(
-            label="Preferencias", value=False, fill_color="white", disabled=True
-        )
 
         # Añade un título centrado encima de los checkboxes
         titulo_checkboxes = ft.Text(
@@ -69,9 +66,9 @@ class InstallPage:
                     divisor,
                     self.checkbox_instalar,
                     self.checkbox_license,
-                    self.checkbox_registrar,
-                    checkbox_herramientas,
-                    checkbox_preferencias,
+                    self.checkbox_business_name,
+                    self.checkbox_herramientas,
+                    self.checkbox_preferencias,
                     divisor,
                     version,
                 ],

@@ -5,26 +5,45 @@ class PageContent:
     def __init__(self, page, navigate_to, app):
         self.page = page
         self.navigate_to = navigate_to
+        self.app = app  # Referencia al objeto principal del programa para manejar el checkbox
 
     def show(self):
+        # Mostrar mensaje de error en un contenedor emergente
+        def show_error_message(message):
+            error_banner.content.controls[0].value = message  # Establecer el mensaje de error
+            error_banner.visible = True  # Hacer visible el banner de error
+            self.page.update()  # Actualizar la página
+
+        # Ocultar el mensaje de error
+        def hide_error_message(_):
+            error_banner.visible = False  # Ocultar el banner de error
+            self.page.update()  # Actualizar la página
+
+        # Validar el campo de entrada
         def validate_entry(e):
             business_name = e.control.value.upper()  # Convertir entrada a mayúsculas
             e.control.value = business_name  # Actualizar el texto en el campo
             self.page.update()  # Refrescar la página
 
-            # Habilitar el botón si el campo no está vacío
-            if business_name.strip():  # Verificar que el campo tenga texto
-                continue_button.disabled = False
-                error_message.visible = False  # Ocultar mensaje de error
-            else:
-                continue_button.disabled = True
-                error_message.visible = True  # Mostrar mensaje de error
-            self.page.update()
-
+        # Acción al presionar "Continuar"
         def on_continue(_):
-            business_name = business_name_field.value.upper()  # Nombre del negocio
-            initialize_database(business_name)  # Crear la base de datos y tabla inicial
-            self.navigate_to("unit.installers.Install_tools")  # Navegar a la siguiente página
+            business_name = business_name_field.value.upper().strip()  # Obtener el nombre del negocio
+            if not business_name:
+                show_error_message("El campo no puede estar vacío.")  # Mostrar error si está vacío
+                return
+            try:
+                # Intentar inicializar la base de datos
+                initialize_database(business_name)
+                
+                # Activar el checkbox en `install.py`
+                self.app.checkbox_business_name.value = True  # Marcar el checkbox correspondiente
+                self.app.page.update()  # Actualizar la página principal
+                
+                # Navegar a la siguiente página si no hay errores
+                self.navigate_to("unit.installers.Install_tools")  
+            except Exception as ex:
+                # Mostrar el error en un banner si ocurre un problema
+                show_error_message(f"Error: {str(ex)}")
 
         # Campo de entrada del nombre del negocio
         business_name_field = ft.TextField(
@@ -38,20 +57,36 @@ class PageContent:
             on_change=validate_entry,  # Validación de entrada
         )
 
-        # Botón Continuar inicial desactivado
+        # Botón Continuar siempre habilitado
         continue_button = ft.ElevatedButton(
             text="Continuar",
-            on_click=on_continue,  # Actualizar la base de datos y continuar
+            on_click=on_continue,  # Intentar actualizar la base de datos y manejar errores
             bgcolor=ft.colors.GREEN,
             color=ft.colors.WHITE,
-            disabled=True,
         )
 
-        # Mensaje de error inicial oculto
-        error_message = ft.Text(
-            "El campo no puede estar vacío.",
-            color=ft.colors.RED,
-            visible=False,
+        # Contenedor emergente para mensajes de error
+        error_banner = ft.Container(
+            visible=False,  # Inicialmente oculto
+            bgcolor=ft.colors.GREY_300,  # Fondo gris claro para mayor elegancia
+            padding=ft.padding.all(10),
+            border_radius=10,
+            content=ft.Row(
+                controls=[
+                    ft.Text(
+                        value="",  # El mensaje dinámico se mostrará aquí
+                        color=ft.colors.BLACK,  # Texto negro para mayor claridad
+                        weight=ft.FontWeight.BOLD,
+                    ),
+                    ft.ElevatedButton(
+                        text="Cerrar",
+                        bgcolor=ft.colors.GREY_800,
+                        color=ft.colors.WHITE,
+                        on_click=hide_error_message,  # Cerrar el mensaje al presionar el botón
+                    ),
+                ],
+                alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+            ),
         )
 
         return ft.Container(
@@ -92,7 +127,6 @@ class PageContent:
                                     text_align="left",
                                 ),
                                 business_name_field,
-                                error_message,
                             ],
                             spacing=10,
                         ),
@@ -102,6 +136,8 @@ class PageContent:
                         content=continue_button,
                         alignment=ft.alignment.bottom_right,
                     ),
+                    # Contenedor de error ubicado debajo del botón
+                    error_banner,
                 ],
                 alignment=ft.MainAxisAlignment.CENTER,
                 spacing=20,
