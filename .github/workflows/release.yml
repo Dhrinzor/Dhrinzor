@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Configurar repositorio
-        uses: actions/checkout@v3  # Actualizado a la última versión disponible
+        uses: actions/checkout@v3  # Última versión disponible para checkout
 
       - name: Instalar GitHub CLI
         run: sudo apt-get update && sudo apt-get install -y gh
@@ -31,7 +31,7 @@ jobs:
           file_pattern: version.txt
 
       - name: Guardar version.txt como artefacto
-        uses: actions/upload-artifact@v3  # Cambiado a v3 para evitar errores
+        uses: actions/upload-artifact@v2  # Cambiado a v2 para mayor compatibilidad
         with:
           name: version
           path: version.txt
