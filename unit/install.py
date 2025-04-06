@@ -13,9 +13,10 @@ class InstallPage:
             label="Registrar", value=False, fill_color="white", disabled=True
         )
         # Verifica la existencia del archivo version.txt
+        print("Directorio actual:", os.getcwd())  # Diagnóstico del directorio
         if not os.path.exists("version.txt"):
             self.version = "Versión desconocida"
-            print("El archivo version.txt no existe.")
+            print("El archivo version.txt no existe en el directorio actual.")
         else:
             with open("version.txt", "r") as file:
                 self.version = file.read().strip()  # Leer y eliminar espacios adicionales

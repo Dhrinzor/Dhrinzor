@@ -34,6 +34,9 @@ jobs:
           name: version
           path: version.txt
 
-      - name: Verificar archivos generados
-        run: ls
-          
+      - name: Verificar directorio y contenido de archivos
+        run: |
+          echo "Archivos presentes en el directorio:"
+          ls
+          echo "Contenido de version.txt:"
+          cat version.txt
