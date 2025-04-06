@@ -9,14 +9,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Configurar repositorio
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3  # Actualizado a la última versión disponible
 
       - name: Instalar GitHub CLI
         run: sudo apt-get update && sudo apt-get install -y gh
 
       - name: Crear versión en GitHub
         run: |
-          gh auth login --with-token <<< ${{ secrets.GITHUB_TOKEN }}
+          echo "${{ secrets.GITHUB_TOKEN }}" | gh auth login --with-token
           gh release create ${{ github.ref_name }} --notes "Release para la etiqueta ${{ github.ref_name }}"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -31,7 +31,7 @@ jobs:
           file_pattern: version.txt
 
       - name: Guardar version.txt como artefacto
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3  # Cambiado a v3 para evitar errores
         with:
           name: version
           path: version.txt
