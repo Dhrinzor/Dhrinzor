@@ -1,5 +1,6 @@
-import flet as ft
+import os
 import importlib
+import flet as ft
 
 class InstallPage:
     def __init__(self, page: ft.Page):
@@ -11,13 +12,14 @@ class InstallPage:
         self.checkbox_registrar = ft.Checkbox(
             label="Registrar", value=False, fill_color="white", disabled=True
         )
-        # Leer la versión desde version.txt
-        try:
+        # Verifica la existencia del archivo version.txt
+        if not os.path.exists("version.txt"):
+            self.version = "Versión desconocida"
+            print("El archivo version.txt no existe.")
+        else:
             with open("version.txt", "r") as file:
                 self.version = file.read().strip()  # Leer y eliminar espacios adicionales
-        except FileNotFoundError:
-            self.version = "Versión desconocida"  # Manejar error si no se encuentra el archivo
-            
+
     def show(self):
         self.page.title = "Instalador - Negocio"
         self.page.horizontal_alignment = "center"
@@ -34,14 +36,14 @@ class InstallPage:
 
         # Añade un título centrado encima de los checkboxes
         titulo_checkboxes = ft.Text(
-            value=" Opciones de Instalación",
+            value="Opciones de Instalación",
             size=25,
             weight=ft.FontWeight.BOLD,
             color="white",
             text_align="center",
         )
-        version=ft.Text(f"Versión: {self.version}", size=15, weight=ft.FontWeight.BOLD)
-        # Añade un divider para separar el título de los checkboxes
+        version = ft.Text(f"Versión: {self.version}", size=15, weight=ft.FontWeight.BOLD)
+        # Añade un divisor para separar el título de los checkboxes
         divisor = ft.Divider(color="white", thickness=1)
 
         # Sección izquierda con los checkboxes y el título
@@ -51,7 +53,6 @@ class InstallPage:
             bgcolor=ft.Colors.BLUE,
             border_radius=10,
             padding=10,
-            
             content=ft.Column(
                 controls=[
                     titulo_checkboxes,  # El título centrado
@@ -124,5 +125,5 @@ class InstallPage:
 
         # Cambia el estado de los checkboxes
         self.checkbox_instalar.value = True
-        
+
         self.page.update()

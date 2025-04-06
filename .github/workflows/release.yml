@@ -27,4 +27,10 @@ jobs:
         with:
           commit_message: Actualizar archivo version.txt con la última versión
           file_pattern: version.txt
+
+      - name: Guardar version.txt como artefacto
+        uses: actions/upload-artifact@v2
+        with:
+          name: version
+          path: version.txt
           
