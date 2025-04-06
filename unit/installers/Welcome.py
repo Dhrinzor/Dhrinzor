@@ -5,7 +5,13 @@ class PageContent:
         self.page = page
         self.navigate_to = navigate_to
         self.app = app  # Referencia a la instancia de InstallPage
-        self.version = "1.0.0"  # Asegúrate de definir la versión en la clase
+
+        # Leer la versión desde version.txt
+        try:
+            with open("version.txt", "r") as file:
+                self.version = file.read().strip()  # Leer y eliminar espacios adicionales
+        except FileNotFoundError:
+            self.version = "Versión desconocida"  # Manejar error si no se encuentra el archivo
 
     def show(self):
         return ft.Container(

@@ -2,7 +2,7 @@ name: Crear versión
 on:
   push:
     tags:
-      - 'v*'
+      - 'v*'  # Detecta etiquetas que comienzan con "v"
 
 jobs:
   release:
@@ -18,3 +18,13 @@ jobs:
           release_name: ${{ github.ref_name }}
           draft: false
           prerelease: false
+
+      - name: Guardar la versión en archivo
+        run: echo "${{ github.ref_name }}" > version.txt
+
+      - name: Commit de version.txt
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: Actualizar archivo version.txt con la última versión
+          file_pattern: version.txt
+          

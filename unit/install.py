@@ -11,7 +11,13 @@ class InstallPage:
         self.checkbox_registrar = ft.Checkbox(
             label="Registrar", value=False, fill_color="white", disabled=True
         )
-
+        # Leer la versión desde version.txt
+        try:
+            with open("version.txt", "r") as file:
+                self.version = file.read().strip()  # Leer y eliminar espacios adicionales
+        except FileNotFoundError:
+            self.version = "Versión desconocida"  # Manejar error si no se encuentra el archivo
+            
     def show(self):
         self.page.title = "Instalador - Negocio"
         self.page.horizontal_alignment = "center"
@@ -34,12 +40,7 @@ class InstallPage:
             color="white",
             text_align="center",
         )
-        version=ft.Text(
-            value="                                              Version 2.01",
-            size=15,
-            weight=ft.FontWeight.BOLD,
-            color="white"
-        )
+        version=ft.Text(f"Versión: {self.version}", size=15, weight=ft.FontWeight.BOLD)
         # Añade un divider para separar el título de los checkboxes
         divisor = ft.Divider(color="white", thickness=1)
 
