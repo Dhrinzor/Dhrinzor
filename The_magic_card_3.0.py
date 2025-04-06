@@ -7,6 +7,7 @@ class TheMagicCardApp:
     def __init__(self, page: ft.Page):
         self.page = page
         self.installation_path = r"C:\Program Files (x86)\The Magic Card"  # Ruta de instalación
+        self.magiccorp_path = r"C:\MagicCorp"  # Ruta de la carpeta MagicCorp
         
         # Configuración de la ventana
         self.page.expand = True
@@ -21,11 +22,13 @@ class TheMagicCardApp:
         # Ejecutar la sincronización en segundo plano
         self._sync_repository()
 
-        # Verificar si la carpeta de instalación existe
-        if not self._is_installed():
-            self._load_installation_page()
-        else:
+        # Verificar si la carpeta MagicCorp existe
+        if os.path.exists(self.magiccorp_path):
+            print(f"La carpeta '{self.magiccorp_path}' ya existe. Cargando la ventana de login...")
             self._load_login_page()
+        else:
+            print(f"La carpeta '{self.magiccorp_path}' no existe. Cargando la página de instalación...")
+            self._load_installation_page()
 
     def _sync_repository(self):
         # Ruta del archivo .bat
@@ -40,10 +43,6 @@ class TheMagicCardApp:
         else:
             print(f"El archivo {bat_file_path} no existe.")
 
-    def _is_installed(self):
-        # Método privado para verificar si la carpeta de instalación existe
-        return os.path.exists(self.installation_path)
-
     def _load_installation_page(self):
         # Método privado para cargar el módulo de instalación
         install_module = importlib.import_module("unit.install")
@@ -51,7 +50,7 @@ class TheMagicCardApp:
 
     def _load_login_page(self):
         # Método privado para cargar el módulo de login
-        login_module = importlib.import_module("login")
+        login_module = importlib.import_module("unit.authentication.login")
         login_module.LoginPage(self.page).show()  # Instanciamos la clase y llamamos al método `show()`
 
     def close_application(self):
