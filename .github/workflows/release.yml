@@ -36,7 +36,7 @@ jobs:
 
       - name: Verificar directorio y contenido de archivos
         run: |
-          echo "Archivos presentes en el directorio:"
+          echo "Archivos presentes en el directorio actual:"
           ls
           echo "Contenido de version.txt:"
-          cat version.txt
+          cat version.txt || echo "version.txt no se generó."
