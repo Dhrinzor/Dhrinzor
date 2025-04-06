@@ -12,10 +12,11 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Instalar GitHub CLI
-        run: sudo apt-get install -y gh
+        run: sudo apt-get update && sudo apt-get install -y gh
 
       - name: Crear versión en GitHub
         run: |
+          gh auth login --with-token <<< ${{ secrets.GITHUB_TOKEN }}
           gh release create ${{ github.ref_name }} --notes "Release para la etiqueta ${{ github.ref_name }}"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
