@@ -6,7 +6,7 @@ class PageContent:
     def __init__(self, page, navigate_to, app):
         self.page = page
         self.navigate_to = navigate_to
-        self.app = app  # Referencia al objeto principal (TheMagicCardApp)
+        self.app = app  # Referencia al objeto principal (TheMagicCardApp o InstallPage)
 
     def _finalize(self, event):
         # Revisar si se seleccionó "Crear acceso directo"
@@ -34,7 +34,7 @@ class PageContent:
 
         # Cerrar la aplicación desde el objeto principal
         time.sleep(1)
-        self.app.page.window_destroy()  # Cierra la ventana principal desde TheMagicCardApp
+        self.app.close_application()  # Cierra la aplicación principal
 
     def show(self):
         global finalize_button, create_shortcut_checkbox, final_message

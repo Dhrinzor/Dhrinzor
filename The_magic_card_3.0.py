@@ -3,7 +3,6 @@ import os
 import flet as ft
 import importlib
 
-
 class TheMagicCardApp:
     def __init__(self, page: ft.Page):
         self.page = page
@@ -48,12 +47,16 @@ class TheMagicCardApp:
     def _load_installation_page(self):
         # Método privado para cargar el módulo de instalación
         install_module = importlib.import_module("unit.install")
-        install_module.InstallPage(self.page).show()  # Instanciamos la clase y llamamos al método `show()`
+        install_module.InstallPage(self.page, self).show()  # Pasamos `self` como referencia al objeto principal
 
     def _load_login_page(self):
         # Método privado para cargar el módulo de login
         login_module = importlib.import_module("login")
         login_module.LoginPage(self.page).show()  # Instanciamos la clase y llamamos al método `show()`
+
+    def close_application(self):
+        print("Cerrando la aplicación...")
+        os._exit(0)  # Salida inmediata del programa
 
 
 def main(page: ft.Page):

@@ -3,11 +3,13 @@ import importlib
 import flet as ft
 
 class InstallPage:
-    def __init__(self, page: ft.Page):
+    def __init__(self, page: ft.Page, app):
         self.page = page
+        self.app = app  # Referencia al objeto principal (TheMagicCardApp)
+
         # Inicializa los checkboxes correctamente
         self.checkbox_instalar = ft.Checkbox(
-            label="Bienvenido", value=False, fill_color="white", disabled=True
+            label="Bienvenido", value=True, fill_color="white", disabled=True
         )
         self.checkbox_license = ft.Checkbox(
             label="Licencia", value=False, fill_color="white", disabled=True
@@ -34,7 +36,7 @@ class InstallPage:
                 self.version = file.read().strip()
 
     def show(self):
-        print("Mostrando la página de instalación...")  # Depuración
+        print("Mostrando la página de instalación...")
         self.page.title = "Instalador - Negocio"
         self.page.horizontal_alignment = "center"
         self.page.vertical_alignment = "center"
@@ -103,28 +105,35 @@ class InstallPage:
 
     def _load_page(self, module_name):
         try:
-            print(f"Cargando módulo: {module_name}")  # Depuración
+            print(f"Cargando módulo: {module_name}")
             module = importlib.import_module(f"{module_name}")
-            if not hasattr(module, "PageContent"):
-                raise AttributeError(f"El módulo {module_name} no contiene la clase PageContent.")
-
-            content = module.PageContent(self.page, self._navigate_to, self)
-            if not hasattr(content, "show"):
-                raise AttributeError(f"La clase PageContent en {module_name} no tiene un método show válido.")
-
+            content = module.PageContent(self.page, self._navigate_to, self.app)  # Pasamos `self.app`
             self.right_section.content = content.show()
             self.right_section.update()
         except Exception as e:
             print(f"Error al cargar el módulo {module_name}: {e}")
 
     def _navigate_to(self, next_module):
-        print(f"Navegando al módulo: {next_module}")  # Depuración
+        print(f"Navegando al módulo: {next_module}")
+        self._update_checkboxes(next_module)  # Actualizar checkboxes según el progreso
         self._load_page(next_module)
 
-    def actualizar_checkboxes(self):
-        print("Actualizando el checkbox 'Bienvenido'...")  # Confirmar que el método es llamado
-        if self.checkbox_instalar:
+    def _update_checkboxes(self, module_name):
+        # Actualizar los checkboxes según el módulo al que se navega
+        print(f"Actualizando checkboxes para el módulo: {module_name}")
+        if "Welcome" in module_name:
             self.checkbox_instalar.value = True
             self.checkbox_instalar.disabled = False
-            print("Checkbox 'Bienvenido' actualizado.")
-        self.page.update()
+        elif "License" in module_name:
+            self.checkbox_license.value = True
+            self.checkbox_license.disabled = False
+        elif "Bussinesname" in module_name:
+            self.checkbox_business_name.value = True
+            self.checkbox_business_name.disabled = False
+        elif "Install_tools" in module_name:
+            self.checkbox_herramientas.value = True
+            self.checkbox_herramientas.disabled = False
+        elif "Performance" in module_name:
+            self.checkbox_preferencias.value = True
+            self.checkbox_preferencias.disabled = False
+        self.page.update()  # Refrescar la página para reflejar los cambios

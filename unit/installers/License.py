@@ -5,7 +5,7 @@ class PageContent:
     def __init__(self, page, navigate_to, app):
         self.page = page
         self.navigate_to = navigate_to
-        self.app = app  # Referencia a la instancia de InstallPage
+        self.app = app  # Referencia a `InstallPage`
 
     def show(self):
         # Ruta del archivo de licencia
@@ -89,8 +89,10 @@ class PageContent:
 
     def _handle_accept_license(self, e):
         print("Licencia aceptada.")  # Confirmar aceptación
-        self.app.checkbox_license.value = True  # Marcar checkbox de licencia como aceptado
-        self.app.page.update()  # Actualizar la página
+        if hasattr(self.app, "_update_checkboxes"):
+            self.app._update_checkboxes("License")  # Actualizar el checkbox desde `InstallPage`
+        else:
+            print("Error: No se pudo actualizar el checkbox.")
         self.navigate_to("unit.installers.Bussinesname")  # Navegar a la página siguiente
 
     def _handle_reject_license(self, e):

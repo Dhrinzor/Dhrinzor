@@ -5,7 +5,7 @@ class PageContent:
     def __init__(self, page, navigate_to, app):
         self.page = page
         self.navigate_to = navigate_to
-        self.app = app  # Referencia al objeto principal del programa para manejar el checkbox
+        self.app = app  # Referencia a la instancia principal (`InstallPage`)
 
     def show(self):
         # Mostrar mensaje de error en un contenedor emergente
@@ -34,11 +34,13 @@ class PageContent:
             try:
                 # Intentar inicializar la base de datos
                 initialize_database(business_name)
-                
-                # Activar el checkbox en `install.py`
-                self.app.checkbox_business_name.value = True  # Marcar el checkbox correspondiente
-                self.app.page.update()  # Actualizar la página principal
-                
+
+                # Actualizar el checkbox correspondiente en `InstallPage`
+                if hasattr(self.app, "_update_checkboxes"):
+                    self.app._update_checkboxes("Bussinesname")  # Activar el checkbox correspondiente
+                else:
+                    print("Error: No se pudo actualizar el checkbox.")
+
                 # Navegar a la siguiente página si no hay errores
                 self.navigate_to("unit.installers.Install_tools")  
             except Exception as ex:

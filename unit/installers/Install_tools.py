@@ -7,8 +7,7 @@ class PageContent:
     def __init__(self, page, navigate_to, app):
         self.page = page
         self.navigate_to = navigate_to
-        self.app = app  # Referencia al objeto principal del programa para manejar el checkbox
-
+        self.app = app  # Referencia al objeto principal (`InstallPage`)
 
     def install_process(self):
         # Ruta para las carpetas de destino
@@ -66,11 +65,15 @@ class PageContent:
             self.page.update()
 
     def proceed_to_next(self):
-        # Navegar al siguiente módulo
-        self.app.checkbox_herramientas.value = True  # Marcar el checkbox correspondiente
-        self.app.page.update()  # Actualizar la página principal
-        self.navigate_to("unit.installers.Performance")
+        # Actualizar el checkbox correspondiente en `InstallPage`
+        if hasattr(self.app, "_update_checkboxes"):
+            self.app._update_checkboxes("Install_tools")  # Actualizar checkbox correspondiente
+        else:
+            print("Error: No se pudo actualizar el checkbox.")
 
+        # Navegar al siguiente módulo
+        self.navigate_to("unit.installers.Performance")
+        
     def show(self):
         # Barra de progreso inicial con bordes ovalados
         global pb, success_message, error_message, install_button, continue_button
