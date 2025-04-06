@@ -10,12 +10,12 @@ class InstallPage:
             label="Bienvenido", value=False, fill_color="white", disabled=True
         )
         self.checkbox_license = ft.Checkbox(
-            label="Registrar", value=False, fill_color="white", disabled=True
+            label="Licencia", value=False, fill_color="white", disabled=True
         )
         self.checkbox_registrar = ft.Checkbox(
-            label="Registrar", value=False, fill_color="white", disabled=True
+            label="Registrar Negocio", value=False, fill_color="white", disabled=True
         )
-        
+
         # Ruta absoluta para version.txt
         path = r"D:\APP\the magic card program\version.txt"
 
@@ -29,6 +29,7 @@ class InstallPage:
                 self.version = file.read().strip()
 
     def show(self):
+        print("Mostrando la página de instalación...")  # Depuración
         self.page.title = "Instalador - Negocio"
         self.page.horizontal_alignment = "center"
         self.page.vertical_alignment = "center"
@@ -51,6 +52,7 @@ class InstallPage:
             text_align="center",
         )
         version = ft.Text(f"Versión: {self.version}", size=15, weight=ft.FontWeight.BOLD)
+
         # Añade un divisor para separar el título de los checkboxes
         divisor = ft.Divider(color="white", thickness=1)
 
@@ -63,8 +65,8 @@ class InstallPage:
             padding=10,
             content=ft.Column(
                 controls=[
-                    titulo_checkboxes,  # El título centrado
-                    divisor,            # El divisor
+                    titulo_checkboxes,
+                    divisor,
                     self.checkbox_instalar,
                     self.checkbox_license,
                     self.checkbox_registrar,
@@ -81,9 +83,8 @@ class InstallPage:
         # Sección derecha vacía por ahora
         self.right_section = ft.Container(
             expand=True,
-            bgcolor=ft.Colors.BLUE,
+            bgcolor=ft.Colors.WHITE,
             border_radius=10,
-            #padding=30,
         )
 
         # Layout principal
@@ -96,18 +97,16 @@ class InstallPage:
             content=ft.Row(
                 controls=[left_section, self.right_section],
                 expand=True,
-                spacing=10,
+                spacing=4,
             ),
         )
 
-        # Añade el layout a la página
         self.page.add(layout)
         self._load_page("unit.installers.Welcome")  # Carga la primera página
 
     def _load_page(self, module_name):
         try:
-            # Carga dinámica del módulo
-            print(f"Cargando módulo: {module_name}")
+            print(f"Cargando módulo: {module_name}")  # Depuración
             module = importlib.import_module(f"{module_name}")
             if not hasattr(module, "PageContent"):
                 raise AttributeError(f"El módulo {module_name} no contiene la clase PageContent.")
@@ -116,23 +115,19 @@ class InstallPage:
             if not hasattr(content, "show"):
                 raise AttributeError(f"La clase PageContent en {module_name} no tiene un método show válido.")
 
-            # Asigna el contenido a la sección derecha
             self.right_section.content = content.show()
             self.right_section.update()
         except Exception as e:
             print(f"Error al cargar el módulo {module_name}: {e}")
 
     def _navigate_to(self, next_module):
-        # Método para manejar la navegación entre módulos
-        print(f"Navegando al módulo: {next_module}")
+        print(f"Navegando al módulo: {next_module}")  # Depuración
         self._load_page(next_module)
 
     def actualizar_checkboxes(self):
-        # Verifica que los checkboxes estén inicializados
-        if self.checkbox_instalar is None or self.checkbox_registrar is None:
-            raise ValueError("Los checkboxes no están inicializados correctamente.")
-
-        # Cambia el estado de los checkboxes
-        self.checkbox_instalar.value = True
-
+        print("Actualizando el checkbox 'Bienvenido'...")  # Confirmar que el método es llamado
+        if self.checkbox_instalar:
+            self.checkbox_instalar.value = True
+            self.checkbox_instalar.disabled = False
+            print("Checkbox 'Bienvenido' actualizado.")
         self.page.update()

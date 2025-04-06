@@ -1,3 +1,4 @@
+import os
 import flet as ft
 
 class PageContent:
@@ -7,48 +8,91 @@ class PageContent:
         self.app = app  # Referencia a la instancia de InstallPage
 
     def show(self):
-        # Contenedor principal que organiza los elementos en la página
+        # Ruta del archivo de licencia
+        license_path = r"D:\APP\the magic card program\license.txt"
+
+        # Leer el contenido del archivo de licencia
+        try:
+            with open(license_path, "r", encoding="utf-8") as file:  # Asegurarse de leer con UTF-8
+                license_text = file.read().splitlines()  # Dividir el texto en líneas
+        except FileNotFoundError:
+            license_text = ["No se encontró el archivo de licencia. Verifique la instalación."]
+            print("Error: El archivo de licencia no existe en la ruta especificada.")
+        except UnicodeDecodeError as e:
+            license_text = ["Error al leer el archivo de licencia. Codificación incompatible."]
+            print(f"Error de decodificación: {e}")
+
+        # Crear elementos para el ListView con el texto de la licencia
+        license_items = [
+            ft.Text(line, size=16, color=ft.colors.BLACK) for line in license_text
+        ]
+
+        # Crear la estructura de la página
         return ft.Container(
             bgcolor=ft.colors.WHITE,
             expand=True,
-            padding=ft.padding.all(20),
-            border_radius=15,
+            padding=ft.padding.all(10),
             content=ft.Column(
                 controls=[
-                    # Título "Bienvenido" centrado en la parte superior
-                    ft.Text(
-                        "Licencia", 
-                        size=30, 
-                        weight=ft.FontWeight.BOLD, 
-                        color=ft.colors.BLACK,
-                        text_align="center"
-                    ),
-                    # Divider
-                    ft.Divider(height=30, thickness=1, color=ft.colors.GREY),
-                    # Mensaje de bienvenida
-                    ft.Text(
-                        "¡Bienvenido a nuestra aplicación! Estamos emocionados de que estés aquí. En breve comenzaremos con la instalación de las principales caracteristicas de nuestra aplicación.",
-                        size=18,
-                        text_align="center",
-                        color=ft.colors.GREY,
-                    ),
-                    # Botón "Comenzar" en la esquina inferior derecha
+                    # Contenedor superior con el título "Acuerdo de Licencia"
                     ft.Container(
-                        content=ft.ElevatedButton(
-                            text="Comenzar",
-                            on_click=self._handle_start_button,
+                        bgcolor=ft.colors.WHITE,
+                        padding=ft.padding.all(5),
+                        border_radius=10,
+                        content=ft.Text(
+                            "Acuerdo de Licencia",
+                            size=25,
+                            weight=ft.FontWeight.BOLD,
+                            color=ft.colors.BLACK,
+                            text_align="center",
                         ),
-                        alignment=ft.alignment.bottom_right,
-                        margin=ft.margin.only(top=20),
+                    ),
+                    # Espaciador visual
+                    ft.Container(margin=ft.margin.only(top=2)),
+                    # Contenedor con el texto desplazable de la licencia
+                    ft.Container(
+                        bgcolor=ft.colors.GREY_200,
+                        padding=ft.padding.all(5),
+                        border_radius=10,
+                        content=ft.ListView(
+                            controls=license_items,  # Agrega las líneas de texto al ListView
+                        ),
+                        height=355,  # Altura del contenedor
+                        width=550,  # Ancho del contenedor
+                    ),
+                    # Espaciador visual para separar de los botones
+                    ft.Container(margin=ft.margin.only(top=5)),
+                    # Botones "Aceptar" y "Rechazar"
+                    ft.Row(
+                        controls=[
+                            ft.ElevatedButton(
+                                text="Aceptar",
+                                on_click=self._handle_accept_license,
+                                bgcolor=ft.colors.GREEN,
+                                color=ft.colors.WHITE,
+                            ),
+                            ft.ElevatedButton(
+                                text="Rechazar",
+                                on_click=self._handle_reject_license,
+                                bgcolor=ft.colors.RED,
+                                color=ft.colors.WHITE,
+                            ),
+                        ],
+                        alignment=ft.MainAxisAlignment.CENTER,
+                        spacing=20,  # Espaciado entre los botones
                     ),
                 ],
                 alignment=ft.MainAxisAlignment.CENTER,
-                spacing=20,  # Espaciado entre elementos
+                spacing=20,  # Espaciado entre los elementos principales
             ),
         )
 
-    def _handle_start_button(self, e):
-        # Llamar al método de actualización de checkboxes en InstallPage
-        self.app.actualizar_checkboxes()
-        # Navegar a la página Username.py
-        self.navigate_to("unit.installers.Username")
+    def _handle_accept_license(self, e):
+        print("Licencia aceptada.")  # Confirmar aceptación
+        self.app.checkbox_license.value = True  # Marcar checkbox de licencia como aceptado
+        self.app.page.update()  # Actualizar la página
+        self.navigate_to("unit.installers.Bussinesname")  # Navegar a la página siguiente
+
+    def _handle_reject_license(self, e):
+        print("Licencia rechazada.")  # Confirmar rechazo
+        self.navigate_to("unit.installers.Welcome")  # Redirigir a la página inicial
