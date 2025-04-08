@@ -2,13 +2,15 @@ import subprocess
 import os
 import flet as ft
 import importlib
-
+from unit.authentication.login import LoginPage
+#from unit.authentication.signup import SignupPage
 class TheMagicCardApp:
     def __init__(self, page: ft.Page):
         self.page = page
         self.installation_path = r"C:\Program Files (x86)\The Magic Card"  # Ruta de instalación
         self.magiccorp_path = r"C:\MagicCorp"  # Ruta de la carpeta MagicCorp
-        
+        #self.signup_page = SignupPage(self)
+        self.login_page = LoginPage(self)
         # Configuración de la ventana
         self.page.expand = True
         self.page.padding = 0
@@ -25,7 +27,7 @@ class TheMagicCardApp:
         # Verificar si la carpeta MagicCorp existe
         if os.path.exists(self.magiccorp_path):
             print(f"La carpeta '{self.magiccorp_path}' ya existe. Cargando la ventana de login...")
-            self._load_login_page()
+            self.navigate()
         else:
             print(f"La carpeta '{self.magiccorp_path}' no existe. Cargando la página de instalación...")
             self._load_installation_page()
@@ -52,6 +54,20 @@ class TheMagicCardApp:
         # Método privado para cargar el módulo de login
         login_module = importlib.import_module("unit.authentication.login")
         login_module.LoginPage(self.page).show()  # Instanciamos la clase y llamamos al método `show()`
+    
+    def navigate(self, page_name):
+
+        # Continuar con la navegación
+        self.page.controls.clear()
+        if page_name == "login":
+            self.page.add(self.login_page.build())
+        elif page_name == "signup":
+            self.page.add(self.signup_page.build())
+        elif page_name == "dashboard":
+            self.page.on_route_change = self.dashboard_page.route_change
+            self.page.add(self.dashboard_page.build(self.page))
+            self.dashboard_page.did_mount()
+        self.page.update()
 
     def close_application(self):
         print("Cerrando la aplicación...")

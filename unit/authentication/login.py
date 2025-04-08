@@ -1,11 +1,11 @@
 import flet as ft
 import threading
 import time
-from pages.dashboard.dashboard import DashboardPage  # Importar DashboardPage
+#from unit.dashboard.dashboard import DashboardPage  # Importar DashboardPage
 
 # Importación de utilidades de colores y tamaños  
-from pages.authentication.utils.sizes import * 
-from pages.authentication.utils.ccs import *
+from src.sizes import * 
+from src.ccs import *
 ##############FIN DE LAS DEPENDENCIAS################  
 
 
@@ -115,9 +115,9 @@ class LoginPage(ft.Control):
         self.main_app.active_user = self.main_app.dbuser.get_last_login_user()
         self.main_app.rol = self.main_app.dbuser.get_user_role(self.main_app.active_user)
         # Inicializa DashboardPage con los valores obtenidos
-        self.main_app.dashboard_page = DashboardPage(self.main_app)
+        #self.main_app.dashboard_page = DashboardPage(self.main_app)
 
-        self.main_app.navigate("dashboard")
+        #self.main_app.navigate("dashboard")
 
     def show_alert_dialog(self, key):
         message = self.list_alerts[key]
