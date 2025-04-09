@@ -1,6 +1,6 @@
 import sqlite3
 import threading
-from pages.authentication.utils.KeyManager import KeyManager
+from DB.KeyManager import KeyManager
 
 class UserDB:
     def __init__(self):

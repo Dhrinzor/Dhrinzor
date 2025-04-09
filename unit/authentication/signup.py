@@ -1,18 +1,16 @@
 import flet as ft
 import string
-from pages.authentication.utils.sizes import *
-from pages.authentication.utils.ccs import *
-
+from src.sizes import *
+from src.ccs import *
 class SignupPage(ft.Control):
     def __init__(self, main_app):
         super().__init__()
         self.main_app = main_app
-
         # Define UI elements
         self.LTitulo = ft.Text('Registrarse', width=alto_letra, size=size_letra, weight='w900', color="white", text_align='center')
         self.imagen = ft.Image(src='src/Image/PNG/signup.png', width=foto_size)
-        self.Enombre = ft.TextField(label="Nombre", width=ancho, height=alto, color=ft.colors.DEEP_PURPLE_ACCENT_200, prefix_icon=ft.icons.EMAIL)
-        self.Eusuario = ft.TextField(label="Usuario",  width=ancho, height=alto, color=ft.colors.DEEP_PURPLE_ACCENT_200, prefix_icon=ft.icons.EMAIL,on_focus=self.cambiar_color_rojo,error_style=ft.TextStyle(color=ft.colors.RED) ) # Asegúrate de que el `error_text` sea rojo)
+        self.Enombre = ft.TextField(label="Nombre", width=ancho, height=alto, color=ft.colors.DEEP_PURPLE_ACCENT_200, prefix_icon=ft.icons.SUPERVISED_USER_CIRCLE_OUTLINED)
+        self.Eusuario = ft.TextField(label="Usuario",  width=ancho, height=alto, color=ft.colors.DEEP_PURPLE_ACCENT_200, prefix_icon=ft.icons.SUPERVISOR_ACCOUNT_OUTLINED,on_focus=self.cambiar_color_rojo,error_style=ft.TextStyle(color=ft.colors.RED) ) # Asegúrate de que el `error_text` sea rojo)
         self.Econtraseña = ft.TextField(
             label="Contraseña", width=ancho, height=alto, color=ft.colors.DEEP_PURPLE_ACCENT_200, prefix_icon=ft.icons.LOCK, 
             can_reveal_password=True, password=True, on_focus=self.cambiar_color_rojo, on_blur=self.validar_contraseña, error_style=ft.TextStyle(color=ft.colors.RED)
@@ -25,29 +23,16 @@ class SignupPage(ft.Control):
             label="Contraseña autorizada", hover_color='#64B5F6', fill_color='#294382', focused_border_color="#9C27B0", 
             width=ancho, height=alto, color=ft.colors.DEEP_PURPLE_ACCENT_200, prefix_icon=ft.icons.LOCK_CLOCK_ROUNDED, 
             can_reveal_password=True, password=True, on_blur=self.validar_contraseña_autorizada, error_style=ft.TextStyle(color=ft.colors.RED)
-        )
-        
+        ) 
         # Buttons
         self.BRegistrar = ft.TextButton(
-            content=ft.Row(
-                controls=[
-                    ft.Icon(ft.icons.PERSON_ADD, color=ft.colors.PURPLE),
-                    ft.Text("Registrar", font_family=diaria, size=diaria_size, color=ft.colors.PURPLE)
-                ]
-            ), 
-            on_click=self.register
+            content=ft.Row(controls=[ft.Icon(ft.icons.PERSON_ADD, color=ft.colors.PURPLE),
+                    ft.Text("Registrar", font_family=diaria, size=diaria_size, color=ft.colors.PURPLE)]),  on_click=self.register
         )
-
-        self.BInicio = ft.TextButton(
-            content=ft.Row(
-                controls=[
-                    ft.Icon(ft.icons.LOGOUT, color=ft.colors.PURPLE),
-                    ft.Text("Volver a inicio", font_family=diaria, size=diaria_size, color=ft.colors.PURPLE)
-                ]
-            ), 
-            on_click=self.login 
+        self.BInicio = ft.TextButton( content=ft.Row(
+                    controls=[ft.Icon(ft.icons.LOGOUT, color=ft.colors.PURPLE),
+                        ft.Text("Volver a inicio", font_family=diaria, size=diaria_size, color=ft.colors.PURPLE)]),on_click=self.login 
         )
-
     def cambiar_color_rojo(self, e):
         e.control.border_color = ft.colors.RED
         if self.page:
@@ -93,45 +78,32 @@ class SignupPage(ft.Control):
     def build(self):
         return ft.Container(   
             ft.Row(
-                [
-                    ft.Container(  
-                        ft.Column(
-                            [
+                [ft.Container( ft.Column([
                                 self.LTitulo, 
-                                ft.Container(self.imagen, padding=ft.padding.only(1, 5))
-                            ],
+                                ft.Container(self.imagen, padding=ft.padding.only(1, 5))],
                             alignment=ft.MainAxisAlignment.SPACE_EVENLY,
-                            horizontal_alignment=ft.CrossAxisAlignment.CENTER
-                        ),
+                            horizontal_alignment=ft.CrossAxisAlignment.CENTER),
                         bgcolor=ft.colors.PURPLE,
                         expand=True,
                         border_radius=ft.BorderRadius(top_left=tope_izquierdo, top_right=tope_derecho, bottom_left=boton_izquierdo, bottom_right=boton_derecho)
                     ),
                     ft.Container(
                         ft.Column(
-                            [
-                                self.LTitulo,
+                            [self.LTitulo,
                                 ft.Container(self.Enombre, padding=ft.padding.only(5, 2)),
                                 ft.Container(self.Eusuario, padding=ft.padding.only(5, 2)),
                                 ft.Container(self.Econtraseña, padding=ft.padding.only(5, 2)),
                                 ft.Container(self.Econfirm_password, padding=ft.padding.only(5, 2)),
                                 ft.Container(self.EVpassword, padding=ft.padding.only(5)),
                                 ft.Container(
-                                    ft.Row(
-                                        [
-                                            ft.Text('                    ', color=ft.colors.PURPLE),
-                                            self.BRegistrar,
-                                        ], 
+                                    ft.Row([ft.Text('                    ', color=ft.colors.PURPLE),
+                                            self.BRegistrar,], 
                                         spacing=8
                                     ), 
                                     padding=ft.padding.only(10)
                                 ),
-                                ft.Container(
-                                    ft.Row(
-                                        [
-                                            ft.Text('Ya tiene cuenta?', color=ft.colors.PURPLE, size=15),
-                                            self.BInicio,
-                                        ], 
+                                ft.Container(ft.Row([ft.Text('Ya tiene cuenta?', color=ft.colors.PURPLE, size=15),
+                                            self.BInicio,], 
                                         spacing=8
                                     ), 
                                     padding=ft.padding.only(10)

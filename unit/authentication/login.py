@@ -26,7 +26,7 @@ class LoginPage(ft.Control):
         self.bcrear_cuenta = ft.TextButton("Registrarse", icon=ft.icons.GROUP_ADD_ROUNDED, on_click=self.signup)
         self.blogin = ft.TextButton("INICIAR SESION", icon=ft.icons.LOGIN, on_click=self.login)
         self.LTitulo = ft.Text('Iniciar Sesion', width=alto_letra, size=size_letra, weight='w900', color=customTextColor, text_align='center')
-        self.imagen = ft.Image(src='src/Image/PNG/login.png', width=foto_size)
+        self.imagen = ft.Image(src='src/Image/PNG/DC.png', width=foto_size)
         
         return ft.Container(
             ft.Row(
@@ -51,7 +51,7 @@ class LoginPage(ft.Control):
                     ft.Container(
                         ft.Column([
                             ft.Text("Bienvenido", size=40, font_family="Georgia"),
-                            ft.Container(self.imagen, padding=ft.padding.only(5, 1)),
+                            ft.Container(self.imagen, padding=ft.padding.only(5)),
                         ],
                         alignment=ft.MainAxisAlignment.SPACE_EVENLY,
                         horizontal_alignment=ft.CrossAxisAlignment.CENTER),

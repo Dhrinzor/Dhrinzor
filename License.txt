@@ -1,30 +1,36 @@
-﻿DEBE LEER ATENTAMENTE EL SIGUIENTE CONTRATO DE LICENCIA PARA EL USUARIO FINAL ANTES DE UTILIZAR ESTE PROGRAMA DE SOFTWARE. AL INSTALAR, COPIAR O UTILIZAR DE ALGUNA FORMA ESTE PROGRAMA DE SOFTWARE ESTARÁ ACEPTANDO LOS TÉRMINOS DE ESTE CONTRATO. SI NO ACEPTA LOS TÉRMINOS DE ESTE CONTRATO DEBE DEVOLVERLO DE FORMA INMEDIATA Y SIN UTILIZAR AL LUGAR DE COMPRA O PONERSE EN CONTACTO CON EL SERVICIO DE ATENCIÓN AL CLIENTE DE DRINZOR CORPORATION ENVIANDO UN CORREO ELECTRONICO AL GMAIL corporationdhrinzor@gmail.com PARA OBTENER LA TOTAL DEVOLUCIÓN DEL PRECIO DE COMPRA DENTRO DE LOS TREINTA (30) DÍAS SIGUIENTES A LA MISMA.
+﻿Contrato de Licencia para el Usuario Final (CLUF)
+IMPORTANTE: LEA DETENIDAMENTE ANTES DE USAR ESTE SOFTWARE
+Este contrato de licencia para el usuario final (CLUF) constituye un acuerdo legal entre usted (el "Usuario") y Dhrinzor Corporation. Al instalar, copiar o usar este software de cualquier forma, usted acepta los términos y condiciones establecidos en este contrato. Si no está de acuerdo con los términos, debe desinstalar el software inmediatamente y ponerse en contacto con el servicio de atención al cliente de Dhrinzor Corporation a través del correo electrónico corporationdhrinzor@gmail.com para obtener un reembolso completo, siempre que lo haga dentro de los primeros treinta (30) días posteriores a la compra.
 
-Este programa de software (el "Programa"), todo material impreso, toda documentación en línea o electrónica y toda copia y trabajos derivados de este programa y material de software, son propiedad de Dhrinzor Corporation. Todo uso del programa se rige por las condiciones del Contrato de licencia para el usuario final, el cual se detalla a continuación ("Contrato de licencia"). El Programa sólo está destinado para su utilización por usuarios finales de acuerdo con las condiciones del Contrato de licencia. Queda expresamente prohibido todo uso, reproducción o redistribución del Programa que no se ajuste a las condiciones del contrato de licencia.
+1. Propiedad del Software
+Este software, incluyendo todo material impreso, documentación en línea o electrónica y cualquier trabajo derivado (el "Programa"), es propiedad exclusiva de Dhrinzor Corporation. El Usuario recibe una licencia limitada para usar el Programa bajo los términos establecidos en este CLUF. Queda estrictamente prohibida toda reproducción, distribución o uso no autorizado del Programa.
 
-1. Licencia de uso limitado. Dhrinzor Corporation, concede por el presente documento y, al instalar el programa usted acepta, una licencia limitada no exclusiva y el derecho a utilizar una (1) copia del Programa para su uso en un ordenador doméstico, de trabajo o portátil. 
+2. Licencia de Uso Limitado
+Dhrinzor Corporation concede al Usuario una licencia limitada, no exclusiva e intransferible para instalar y usar una (1) copia del Programa en un solo dispositivo, ya sea un ordenador personal, portátil o de trabajo.
 
-2. Propiedad. Todo título y derecho de propiedad intelectual sobre el Programa, así como cualquier copia del mismo (incluyendo, entre otros, todo título, código de ordenador, tema, lugar, concepto, diseño, animación, sonido, derecho moral, cualquier documento relacionado y "subprograma" incorporado al Programa) son propiedad de Dhrinzor Corporation o de sus socios autorizados. El programa está protegido por las leyes de copyright , por los tratados y convenciones de copyright . Todos los derechos reservados. 
+3. Restricciones de Uso
+El Usuario tiene prohibido:
+- Copiar, modificar, descompilar, desensamblar, realizar ingeniería inversa o crear trabajos derivados del Programa sin la autorización previa y escrita de Dhrinzor Corporation.
+- Usar componentes del Programa por separado en más de un dispositivo.
+- Transferir, vender, alquilar, arrendar o conceder sublicencias del Programa a terceros sin el consentimiento previo y por escrito de Dhrinzor Corporation.
+- Utilizar el Programa para fines comerciales, tales como en cibercafés, centros de juegos o establecimientos similares. Para uso comercial, póngase en contacto con dhrinzordh@gmail.com para obtener un contrato de licencia especial.
 
-3. Responsabilidades del usuario final.
-1.	Al estar sujeto a la concesión de licencia arriba mencionada, no puede ni de forma parcial ni completa copiar, fotocopiar, reproducir, traducir, invertir la ingeniería, derivar el código de origen, modificar, desensamblar, descompilar, crear trabajos basados en el Programa o eliminar cualquier aviso o etiqueta del Programa sin el previo consentimiento por escrito de Dhrinzor Corp.
- 
-2.	Se le concede la licencia del Programa como producto único. No puede separar sus componentes para su uso en más de un ordenador. 
- 
-3.	Tiene el derecho de utilizar el Programa para su uso personal, pero carece de derecho para: 
 
-1.	vender o gravar garantía prendaria sobre el Programa o transferir reproducciones del mismo a terceros de ningún modo; alquilar, arrendar o conceder una licencia del Programa a terceros sin el previo consentimiento por escrito de Dhrinzor Corp;
- 
-2.	explotar el Programa o alguna de sus partes para cualquier fin comercial, incluyendo, entre otros, el uso en un cibercafé, un centro de juegos o cualquier otro establecimiento. Dhrinzor Corp le puede proporcionar un Contrato de licencia para sitio web que le permitirá disponer del Programa para usos comerciales. Si desea más detalles, póngase en contacto con dhrinzordh@gmail.com; 
- 
-3.	utilizar o permitir el uso a terceros del Editor y del Material nuevo con intención comercial incluyendo, entre otros, distribución del Material nuevo de forma independiente o junto con otro software o hardware a través de ningún canal de distribución incluyendo, entre otros, venta de segunda mano y distribución electrónica en-línea, sin el consentimiento previo, por escrito, de Dhrinzor Corp; 
- 
-4.	promover o proporcionar servicios de encuentro para el Programa o emular o redirigir los protocolos de comunicación empleados por Dhrinzor Corp en la función de red del Programa, a través de emulación de protocolos, tunelización, modificación o agregación de componentes al Programa, uso de un programa de utilidades o cualquier otra técnica conocida actualmente o aún por desarrollar, para cualquier fin; 
- 
-5. Terminación. El presente Contrato de licencia será válido hasta su finalización. Puede terminar el Contrato de licencia cuando lo desee destruyendo el Programa y cualquier Material nuevo. Dhrinzor Corp se reserva el derecho de finalizar este Contrato de Licencia en caso de que usted no cumpla los términos y condiciones que en él se especifican. En tal caso, deberá destruir inmediatamente el Programa y cualquier Material nuevo.
+4. Terminación
+Este contrato será válido hasta su terminación. Dhrinzor Corporation se reserva el derecho de finalizar el CLUF si el Usuario incumple alguno de sus términos. En tal caso, el Usuario debe desinstalar y eliminar todas las copias del Programa inmediatamente.
 
-6. Atención al cliente / Soporte técnico. La "Atención al cliente", de aquí en adelante, puede serle prestada por representantes de Dhrinzor Corp por teléfono o correo electrónico (e-mail). 
+5. Garantía Limitada
+El Programa se proporciona "tal cual" sin ninguna garantía expresa o implícita, incluyendo, entre otras, garantías de comerciabilidad o idoneidad para un propósito particular. Sin embargo, Dhrinzor Corporation garantiza que los medios físicos que contienen el Programa estarán libres de defectos materiales durante un periodo de 90 días a partir de la fecha de compra. En caso de defectos, Dhrinzor Corporation puede optar por:
+- Reparar el defecto.
+- Proporcionar un producto similar o de menor valor.
+- Reembolsar el precio de compra.
 
-7. Garantía limitada. Dhrinzor Corp no asume ninguna garantía por el Programa, el Editor y el manual(es). El Programa, el Editor y el manual(es) se proporcionan tal y como se presentan, sin ningún tipo de garantía, expresa o implícita, excluyéndose, entre otras, las garantías implícitas de comerciabilidad, idoneidad para un propósito concreto o no violación de derechos de terceros. Todo riesgo proveniente del uso o ejecución del Programa, es asumido por usted; sin embargo, Dhrinzor Corp garantiza que los medios que contienen el Programa están libres de defecto material y de fabricación durante un período de 90 días a partir de la fecha de compra del Programa. En caso de que los medios resulten defectuosos durante ese período de tiempo y bajo presentación de la prueba de compra del Programa defectuoso, Dhrinzor Corp optará libremente por 1) corregir cualquier defecto, 2) proporcionarle un producto de igual o inferior valor, o bien 3) devolverle su dinero. Alguno(a)s estados / jurisdicciones no permiten la exclusión o limitación de las garantías implícitas o de la responsabilidad por daños fortuitos, por lo tanto, puede que las limitaciones mencionadas arriba no sean aplicables a su caso.
 
-8. Limitación de responsabilidad. NI DRHINZOR CORPORATION, LA EMPRESA A LA QUE PERTENECE O LAS FILIALES O AFILIADOS SERÁN RESPONSABLES BAJO NINGÚN CONCEPTO DE NINGUNA PÉRDIDA O DAÑO DE NINGÚN TIPO QUE PUEDA RESULTAR DEL USO DEL PROGRAMA, INCLUYENDO, ENTRE OTROS, PÉRDIDA DE CLIENTELA, PÉRDIDA DE TRABAJO, FALLOS O MAL FUNCIONAMIENTO DE ORDENADORES NI NINGÚN OTRO DAÑO O PÉRDIDA COMERCIAL. Dhrinzor Corp NO ASUMIRÁ LAS GARANTÍAS CONTRA INCUMPLIMIENTO QUE PUEDAN DEDUCIRSE DE LA SECCIÓN 2-312(3) DEL CÓDIGO COMERCIAL UNIFORME Y/O CUALQUIER OTRA LEY ESTATAL. 
+6. Limitación de Responsabilidad
+Dhrinzor Corporation y sus afiliados no serán responsables de daños directos, indirectos, incidentales o consecuentes derivados del uso del Programa. Esto incluye, pero no se limita a, pérdida de ingresos, interrupción del negocio o fallos de sistemas informáticos.
+
+7. Atención al Cliente
+El Usuario puede contactar al equipo de soporte de Dhrinzor Corporation para asistencia técnica o consultas relacionadas con el Programa, enviando un correo electrónico a corporationdhrinzor@gmail.com.
+
+8. Jurisdicción
+Este contrato se rige por las leyes aplicables en la jurisdicción del domicilio de Dhrinzor Corporation. Algunas jurisdicciones pueden no permitir ciertas limitaciones de garantía, por lo que algunas de las disposiciones aquí contenidas pueden no aplicarse en su caso.

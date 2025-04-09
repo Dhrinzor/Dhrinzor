@@ -3,14 +3,16 @@ import os
 import flet as ft
 import importlib
 from unit.authentication.login import LoginPage  # Asegúrate de que el path sea correcto
-
+from unit.authentication.signup import SignupPage  # Asegúrate de que el path sea correcto
+from DB.user import UserDB
 class MagicCorp:
     def __init__(self, page: ft.Page):
         self.page = page
         self.installation_path = r"C:\Program Files (x86)\The Magic Card"  # Ruta de instalación
         self.magiccorp_path = r"C:\MagicCorp"  # Ruta de la carpeta MagicCorp
         self.login_page = LoginPage(self)  # Instanciamos LoginPage al inicializar el programa
-
+        self.signup_page = SignupPage(self)
+        self.dbuser = UserDB()
         # Configuración de la ventana
         self.page.expand = True
         self.page.padding = 0
@@ -59,6 +61,7 @@ class MagicCorp:
             self.page.add(self.login_page.build())  # Agrega la estructura de LoginPage
         elif page_name == "signup":
             print("Navegando a la página de registro (signup)")
+            self.page.add(self.signup_page.build())  # Agrega la estructura de LoginPage
         elif page_name == "dashboard":
             print("Navegando al dashboard")
         else:

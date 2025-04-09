@@ -8,8 +8,22 @@ class PageContent:
         self.page = page
         self.navigate_to = navigate_to
         self.app = app  # Referencia al objeto principal (`InstallPage`)
+        self.selected_mode = None  # Variable para almacenar el modo seleccionado
 
     def install_process(self):
+        # Verificar que se haya seleccionado un modo
+        if not self.selected_mode:
+            error_message.value = "Debe seleccionar un modo para continuar."
+            error_message.visible = True
+            self.page.update()
+            return
+
+        # Deshabilitar los radio botones para evitar cambios adicionales
+        for radio in mode_selector.content.controls:
+            radio.disabled = True
+            radio.label_style = ft.TextStyle(color=ft.colors.BLACK)  # Mantener el texto negro
+        mode_selector.update()  # Actualizar para reflejar el estado
+
         # Ruta para las carpetas de destino
         magiccorp_path = os.path.join("C:\\", "MagicCorp")
         db_dest_path = os.path.join(magiccorp_path, "DB")
@@ -46,11 +60,14 @@ class PageContent:
 
                 # Actualizar barra de progreso
                 pb.value = (i + 1) / total_files
-                time.sleep(0.1)  # Simular retraso para visibilidad
+                time.sleep(0.2)  # Simular retraso para visibilidad
                 self.page.update()
 
             # Mensaje de éxito
-            success_message.value = "¡Instalación completada con éxito! Presione 'Continuar' para proceder."
+            success_message.value = (
+                f"¡Instalación completada como modo '{self.selected_mode}'! "
+                "Presione 'Continuar' para proceder."
+            )
             success_message.visible = True
             error_message.visible = False
             install_button.visible = False  # Ocultar botón de instalar
@@ -73,10 +90,14 @@ class PageContent:
 
         # Navegar al siguiente módulo
         self.navigate_to("unit.installers.Performance")
-        
+
+    def select_mode(self, e):
+        self.selected_mode = e.control.value
+        print(f"Modo seleccionado: {self.selected_mode}")
+
     def show(self):
         # Barra de progreso inicial con bordes ovalados
-        global pb, success_message, error_message, install_button, continue_button
+        global pb, success_message, error_message, install_button, continue_button, mode_selector
         pb = ft.ProgressBar(
             width=500,
             height=15,
@@ -110,12 +131,34 @@ class PageContent:
 
         # Elemento descriptivo
         description_text = ft.Text(
-            "Bienvenido al asistente de instalación de MagicCorp.\n"
-            "Este proceso configurará los archivos necesarios para la operación del sistema. "
-            "Presione 'Instalar' para comenzar.",
+            "Seleccione el modo de instalación y presione 'Instalar' para comenzar.",
             size=16,
             color=ft.colors.BLACK,
             text_align=ft.TextAlign.CENTER,
+        )
+
+        # Radios para seleccionar el modo
+        mode_selector = ft.RadioGroup(
+            content=ft.Column(
+                controls=[
+                    ft.Radio(
+                        value="Negocio",
+                        label="Modo Negocio (Administrador del almacén principal)",
+                        label_style=ft.TextStyle(color=ft.colors.BLACK)  # Estilo del texto negro
+                    ),
+                    ft.Radio(
+                        value="Local",
+                        label="Modo Local (Gestión de inventario y ventas)",
+                        label_style=ft.TextStyle(color=ft.colors.BLACK)  # Estilo del texto negro
+                    ),
+                    ft.Radio(
+                        value="Local Independiente",
+                        label="Modo Local (Gestión de almacen, inventario y ventas)",
+                        label_style=ft.TextStyle(color=ft.colors.BLACK)  # Estilo del texto negro
+                    ),
+                ],
+            ),
+            on_change=self.select_mode
         )
 
         # Estructura de la página
@@ -127,6 +170,7 @@ class PageContent:
                 controls=[
                     ft.Text("Asistente de Instalación - MagicCorp", size=28, weight=ft.FontWeight.BOLD, color=ft.colors.BLUE),
                     description_text,  # Texto introductorio
+                    mode_selector,  # Radios para seleccionar el modo
                     ft.Divider(height=20, thickness=2),  # Línea divisoria para estética
                     pb,  # Barra de progreso con bordes ovalados
                     success_message,  # Mensaje de éxito

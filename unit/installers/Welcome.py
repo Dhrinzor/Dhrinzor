@@ -17,7 +17,7 @@ class PageContent:
                 controls=[
                     # Título "Bienvenido" centrado en la parte superior
                     ft.Text(
-                        "Bienvenido",
+                        "Bienvenido a MagicCorp",
                         size=30,
                         weight=ft.FontWeight.BOLD,
                         color=ft.colors.BLACK,

@@ -29,12 +29,12 @@ class PageContent:
         # Mensaje final dinámico
         finalize_button.text = "Completado"
         finalize_button.disabled = True
-        final_message.value = "¡Instalación completada con éxito! Gracias por confiar en MagicCorp. Cierre la ventana de instalacion"
+        final_message.value = "¡Instalación completada con éxito! Gracias por confiar en MagicCorp."
         self.page.update()
 
-        # Cerrar la aplicación desde el objeto principal
-        time.sleep(1)
-        #self.app.close_application()  # Cierra la aplicación principal
+        # Cargar la página de inicio de sesión
+        print("Redirigiendo a la página de inicio de sesión...")
+        self.app.navigate("login")  # Navegar al login usando el método principal
 
     def show(self):
         global finalize_button, create_shortcut_checkbox, final_message

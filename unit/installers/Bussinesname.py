@@ -128,6 +128,12 @@ class PageContent:
                                     color=ft.colors.BLACK,
                                     text_align="left",
                                 ),
+                                ft.Text(
+                                    "Este nombre no podrá modificarse en el futuro.",
+                                    size=18,
+                                    color=ft.colors.BLACK,
+                                    text_align="left",
+                                ),
                                 business_name_field,
                             ],
                             spacing=10,
