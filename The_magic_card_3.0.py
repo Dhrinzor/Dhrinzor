@@ -2,15 +2,15 @@ import subprocess
 import os
 import flet as ft
 import importlib
-from unit.authentication.login import LoginPage
-#from unit.authentication.signup import SignupPage
+from unit.authentication.login import LoginPage  # Asegúrate de que el path sea correcto
+
 class TheMagicCardApp:
     def __init__(self, page: ft.Page):
         self.page = page
         self.installation_path = r"C:\Program Files (x86)\The Magic Card"  # Ruta de instalación
         self.magiccorp_path = r"C:\MagicCorp"  # Ruta de la carpeta MagicCorp
-        #self.signup_page = SignupPage(self)
-        self.login_page = LoginPage(self)
+        self.login_page = LoginPage(self)  # Instanciamos LoginPage al inicializar el programa
+
         # Configuración de la ventana
         self.page.expand = True
         self.page.padding = 0
@@ -27,7 +27,7 @@ class TheMagicCardApp:
         # Verificar si la carpeta MagicCorp existe
         if os.path.exists(self.magiccorp_path):
             print(f"La carpeta '{self.magiccorp_path}' ya existe. Cargando la ventana de login...")
-            self.navigate()
+            self.navigate("login")
         else:
             print(f"La carpeta '{self.magiccorp_path}' no existe. Cargando la página de instalación...")
             self._load_installation_page()
@@ -50,23 +50,21 @@ class TheMagicCardApp:
         install_module = importlib.import_module("unit.install")
         install_module.InstallPage(self.page, self).show()  # Pasamos `self` como referencia al objeto principal
 
-    def _load_login_page(self):
-        # Método privado para cargar el módulo de login
-        login_module = importlib.import_module("unit.authentication.login")
-        login_module.LoginPage(self.page).show()  # Instanciamos la clase y llamamos al método `show()`
-    
     def navigate(self, page_name):
-
-        # Continuar con la navegación
+        # Limpiar los controles actuales de la página
         self.page.controls.clear()
+
+        # Navegación según el nombre de la página
         if page_name == "login":
-            self.page.add(self.login_page.build())
+            self.page.add(self.login_page.build())  # Agrega la estructura de LoginPage
         elif page_name == "signup":
-            self.page.add(self.signup_page.build())
+            print("Navegando a la página de registro (signup)")
         elif page_name == "dashboard":
-            self.page.on_route_change = self.dashboard_page.route_change
-            self.page.add(self.dashboard_page.build(self.page))
-            self.dashboard_page.did_mount()
+            print("Navegando al dashboard")
+        else:
+            print(f"Página desconocida: {page_name}")
+        
+        # Actualizar la página con los nuevos controles
         self.page.update()
 
     def close_application(self):
