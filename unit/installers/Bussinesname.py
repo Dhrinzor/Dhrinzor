@@ -1,5 +1,8 @@
+import os
+import shutil
 import flet as ft
-from DB.db_setup import initialize_database  # Importar la función para la base de datos
+from DB.db_setup import initialize_database  # Importar la función para inicializar la base de datos
+
 
 class PageContent:
     def __init__(self, page, navigate_to, app):
@@ -25,6 +28,37 @@ class PageContent:
             e.control.value = business_name  # Actualizar el texto en el campo
             self.page.update()  # Refrescar la página
 
+        # Actualizar el archivo key.txt con el nombre del negocio
+        def update_key_file(business_name):
+            try:
+                # Ruta del archivo fuente (local)
+                source_key_path = os.path.join(os.getcwd(), "key.txt")
+                if not os.path.exists(source_key_path):
+                    raise FileNotFoundError("No se encontró el archivo 'key.txt' en la raíz local.")
+
+                # Leer contenido actual del archivo
+                with open(source_key_path, "r", encoding="utf-8") as file:
+                    content = file.readlines()
+
+                # Actualizar el campo 'Negocio:'
+                for i, line in enumerate(content):
+                    if "Negocio:" in line:
+                        content[i] = f"          Negocio: {business_name}\n"
+
+                # Escribir el contenido actualizado
+                with open(source_key_path, "w", encoding="utf-8") as file:
+                    file.writelines(content)
+
+                # Copiar el archivo actualizado a C:\MagicCorp
+                destination_key_path = os.path.join("C:\\", "MagicCorp", "key.txt")
+                magiccorp_path = os.path.join("C:\\", "MagicCorp")
+                if not os.path.exists(magiccorp_path):
+                    os.mkdir(magiccorp_path)  # Crear carpeta MagicCorp si no existe
+                shutil.copy(source_key_path, destination_key_path)
+                print(f"Archivo 'key.txt' actualizado y copiado exitosamente a {destination_key_path}")
+            except Exception as ex:
+                raise Exception(f"Error al actualizar el archivo 'key.txt': {str(ex)}")
+
         # Acción al presionar "Continuar"
         def on_continue(_):
             business_name = business_name_field.value.upper().strip()  # Obtener el nombre del negocio
@@ -32,6 +66,9 @@ class PageContent:
                 show_error_message("El campo no puede estar vacío.")  # Mostrar error si está vacío
                 return
             try:
+                # Actualizar el archivo key.txt con el nombre del negocio
+                update_key_file(business_name)
+
                 # Intentar inicializar la base de datos
                 initialize_database(business_name)
 
@@ -42,7 +79,7 @@ class PageContent:
                     print("Error: No se pudo actualizar el checkbox.")
 
                 # Navegar a la siguiente página si no hay errores
-                self.navigate_to("unit.installers.Install_tools")  
+                self.navigate_to("unit.installers.Install_tools")
             except Exception as ex:
                 # Mostrar el error en un banner si ocurre un problema
                 show_error_message(f"Error: {str(ex)}")

@@ -2,6 +2,7 @@ import os
 import shutil
 import time
 import flet as ft
+from DB.DB_Negocio import DBNegocio  # Importar la gestión de la base de datos
 
 class PageContent:
     def __init__(self, page, navigate_to, app):
@@ -9,6 +10,7 @@ class PageContent:
         self.navigate_to = navigate_to
         self.app = app  # Referencia al objeto principal (`InstallPage`)
         self.selected_mode = None  # Variable para almacenar el modo seleccionado
+
 
     def install_process(self):
         # Verificar que se haya seleccionado un modo
@@ -22,7 +24,7 @@ class PageContent:
         for radio in mode_selector.content.controls:
             radio.disabled = True
             radio.label_style = ft.TextStyle(color=ft.colors.BLACK)  # Mantener el texto negro
-        mode_selector.update()  # Actualizar para reflejar el estado
+        mode_selector.update()  # Actualizar para reflejar el estado visual
 
         # Ruta para las carpetas de destino
         magiccorp_path = os.path.join("C:\\", "MagicCorp")
@@ -37,31 +39,124 @@ class PageContent:
             if not os.path.exists(db_dest_path):
                 os.mkdir(db_dest_path)
 
-            # Ruta de origen de la carpeta DB en el directorio actual
-            source_folder = os.path.join(os.getcwd(), "DB")
-            if not os.path.exists(source_folder):
-                raise FileNotFoundError(f"No se encontró la carpeta de origen: {source_folder}")
+            # Copiar archivos individuales
+            files_to_copy = [
+                "license.txt",
+                "sync_version.bat",
+                "version.txt",
+                "test.txt",
+                "README.md",
+                "install.nsi",
+                "requirements.txt",
+            ]
 
-            # Obtener todos los archivos .db en la carpeta de origen
-            db_files = [f for f in os.listdir(source_folder) if f.endswith(".db")]
-            if not db_files:
-                raise FileNotFoundError("No se encontraron archivos .db en la carpeta de origen.")
+            total_files = len(files_to_copy)
+            progress_increment = 0.3 / (total_files + 2)  # Avance proporcional (incluye carpetas a copiar)
 
-            # Configurar la barra de progreso
-            total_files = len(db_files)
-            pb.value = 0
+            for index, file_name in enumerate(files_to_copy):
+                source_path = os.path.join(os.getcwd(), file_name)
+                destination_path = os.path.join(magiccorp_path, file_name)
+
+                if not os.path.exists(source_path):
+                    pb.value = 0  # Reiniciar progreso en caso de error
+                    pb.color = ft.colors.RED  # Indicar error
+                    self.page.update()
+                    raise FileNotFoundError(f"No se encontró el archivo '{file_name}' en la raíz local.")
+
+                # Copiar archivo
+                shutil.copy(source_path, destination_path)
+                print(f"Archivo '{file_name}' copiado exitosamente a {destination_path}")
+
+                # Actualizar progreso después de cada archivo copiado
+                pb.value += progress_increment
+                self.page.update()
+
+            # Actualizar la línea Version: en key.txt
+            key_file_path = os.path.join(magiccorp_path, "key.txt")
+            version_file_path = os.path.join(os.getcwd(), "version.txt")
+
+            if not os.path.exists(key_file_path):
+                raise FileNotFoundError(f"No se encontró el archivo 'key.txt' en {magiccorp_path}.")
+            if not os.path.exists(version_file_path):
+                raise FileNotFoundError("No se encontró el archivo 'version.txt' en la raíz local.")
+
+            # Leer la versión desde version.txt
+            with open(version_file_path, "r", encoding="utf-8") as version_file:
+                version = version_file.read().strip()
+
+            # Actualizar key.txt con la versión
+            with open(key_file_path, "r+", encoding="utf-8") as key_file:
+                content = key_file.readlines()
+                for i, line in enumerate(content):
+                    if "Version:" in line:
+                        content[i] = f"          Version: {version}\n"
+                        break
+                key_file.seek(0)
+                key_file.writelines(content)
+                key_file.truncate()
+            print(f"Archivo 'key.txt' actualizado con la versión: {version}")
+
+            # Copiar la carpeta src con su contenido
+            src_path = os.path.join(os.getcwd(), "src")
+            destination_src_path = os.path.join(magiccorp_path, "src")
+
+            if not os.path.exists(src_path):
+                pb.value = 0  # Reiniciar progreso en caso de error
+                pb.color = ft.colors.RED  # Indicar error
+                self.page.update()
+                raise FileNotFoundError("No se encontró la carpeta 'src' en la raíz local.")
+
+            # Copiar toda la carpeta src y su contenido
+            shutil.copytree(src_path, destination_src_path, dirs_exist_ok=True)
+            print(f"Carpeta 'src' copiada exitosamente a {destination_src_path}")
+
+            # Actualizar progreso después de copiar la carpeta src
+            pb.value += progress_increment
             self.page.update()
 
-            # Copiar archivos con progreso
-            for i, file in enumerate(db_files):
-                src_path = os.path.join(source_folder, file)
-                dest_path = os.path.join(db_dest_path, file)
-                shutil.copy(src_path, dest_path)
+            # Leer el nombre del negocio desde el archivo key.txt
+            business_name = None
+            with open(key_file_path, "r", encoding="utf-8") as key_file:
+                for line in key_file:
+                    if "Negocio:" in line:
+                        business_name = line.split(":")[1].strip()
+                        break
 
-                # Actualizar barra de progreso
-                pb.value = (i + 1) / total_files
-                time.sleep(0.2)  # Simular retraso para visibilidad
+            if not business_name:
+                pb.value = 0  # Reiniciar progreso en caso de error
                 self.page.update()
+                raise ValueError("El archivo 'key.txt' no contiene un nombre válido para el negocio.")
+
+            # Ruta del archivo de base de datos del negocio
+            business_db_path = os.path.join(db_dest_path, f"DB_{business_name}.db")
+
+            # Verificar si existe el archivo con el nombre correcto
+            if not os.path.exists(business_db_path):
+                pb.value = 0  # Reiniciar progreso en caso de error
+                self.page.update()
+                raise FileNotFoundError(f"No se encontró el archivo de base de datos: {business_db_path}. Asegúrese de mover el archivo correcto.")
+
+            # Actualizar progreso antes de inicializar la base de datos
+            pb.value = 0.8
+            self.page.update()
+
+            # Inicializar el objeto DBNegocio con la ruta correcta
+            db_negocio = DBNegocio(business_db_path)
+
+            # Configurar las tablas dependiendo del modo seleccionado
+            if self.selected_mode == "Negocio":
+                db_negocio.setup_negocio_tables()
+            elif self.selected_mode == "Local":
+                print("Modo 'Local' no implementado completamente.")
+            elif self.selected_mode == "Local Independiente":
+                print("Modo 'Local Independiente' no implementado completamente.")
+            else:
+                raise ValueError(f"Modo seleccionado '{self.selected_mode}' no válido.")
+
+            # Actualizar progreso después de configurar las tablas
+            pb.value = 1.0  # Progreso completo
+            pb.color = ft.colors.GREEN  # Cambiar el color a verde
+            self.page.update()
 
             # Mensaje de éxito
             success_message.value = (
@@ -75,10 +170,17 @@ class PageContent:
             self.page.update()
 
         except Exception as e:
-            # Mostrar mensaje de error si ocurre alguna excepción
+            # Reiniciar progreso en caso de error
+            pb.value = 0  # Reiniciar barra
+            pb.color = ft.colors.RED  # Cambiar el color a rojo
+            self.page.update()
+
+            # Mostrar mensaje de error
             error_message.value = f"Error: {str(e)}"
             error_message.visible = True
             success_message.visible = False
+            install_button.visible = True  # Mostrar botón de instalar nuevamente
+            continue_button.visible = False  # Ocultar botón de continuar
             self.page.update()
 
     def proceed_to_next(self):
