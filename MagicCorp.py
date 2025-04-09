@@ -4,7 +4,7 @@ import flet as ft
 import importlib
 from unit.authentication.login import LoginPage  # Asegúrate de que el path sea correcto
 
-class TheMagicCardApp:
+class MagicCorp:
     def __init__(self, page: ft.Page):
         self.page = page
         self.installation_path = r"C:\Program Files (x86)\The Magic Card"  # Ruta de instalación
@@ -73,7 +73,7 @@ class TheMagicCardApp:
 
 
 def main(page: ft.Page):
-    app = TheMagicCardApp(page)
+    app = MagicCorp(page)
     app.run()  # Ejecuta la aplicación principal
 
 
