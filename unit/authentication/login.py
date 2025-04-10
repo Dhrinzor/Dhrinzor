@@ -1,7 +1,8 @@
 import flet as ft
 import threading
+import os
 import time
-#from DB.user import UserDB
+from DB.db_setup import UserDB  # Importar la gestión de la base de datos
 #from unit.dashboard.dashboard import DashboardPage  # Importar DashboardPage
 
 # Importación de utilidades de colores y tamaños  
@@ -10,11 +11,15 @@ from src.ccs import *
 ##############FIN DE LAS DEPENDENCIAS################  
 
 
-class LoginPage(ft.Control):  
-    def __init__(self, main_app):  
-        super().__init__()  
-        self.main_app = main_app  
-        #self.dbuser = UserDB()
+class LoginPage(ft.Control):
+    def __init__(self, main_app):
+        super().__init__()
+        self.main_app = main_app
+
+        # Define la ruta del archivo de base de datos
+        self.business_db_path = os.path.join("C:\\", "MagicCorp", "DB", "DB_{business_name}.db")
+        self.dbuser = UserDB(self.business_db_path)  # Pasa la ruta de la base de datos como argumento
+
         self.list_alerts = {
             "ALpassword": "¡Error! Usuario o contraseña incorrecta.",
             "ALvacios": "¡Error! Existen campos vacíos.",
@@ -76,11 +81,11 @@ class LoginPage(ft.Control):
         self.Econtraseña.update()
 
     def login(self, e):
-        if self.main_app.dbuser.login(self.Eusuario.value, self.Econtraseña.value):
+        if self.dbuser.login(self.Eusuario.value, self.Econtraseña.value):
             self.name = self.Eusuario.value
             self.show_loading_screen()
 
-            threading.Thread(target=self.main_app.dbuser.insert_login_history, args=(self.name,)).start()
+            threading.Thread(target=self.dbuser.insert_login_history, args=(self.name,)).start()
             
             self.check_user_role()  # Verificar el rol del usuario
         else:

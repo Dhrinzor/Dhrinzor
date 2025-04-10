@@ -49,9 +49,9 @@ class PageContent:
         - El contenido de este programa podría ser utilizado de forma malintencionada si es expuesto.
 
         *****************MagicCorp*****************
-        Negocio: {business_name}
-            Versión: 
-            Tipo de instalación:
+    Negocio: {business_name}
+    Versión: 
+    Tipo de instalación:
 
         ****************PROTECCIÓN ****************
         1. **Control de Acceso:**

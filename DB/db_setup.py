@@ -41,9 +41,11 @@ class BusinessDB:
             """, (self.business_name,))
             print(f"Tabla `negocio` creada y configurada para el negocio: {self.business_name}")
             
-from DB.KeyManager import KeyManager          
+from DB.KeyManager import KeyManager
+
 class UserDB:
     def __init__(self, business_db_path):
+        """Inicializa la clase UserDB con la ruta de la base de datos."""
         self.business_db_path = business_db_path
 
         # Inicializar KeyManager
@@ -55,7 +57,7 @@ class UserDB:
         self.create_user_tables()
 
     def connect(self):
-        """Conecta a la base de datos específica del negocio."""
+        """Conecta a la base de datos."""
         return sqlite3.connect(self.business_db_path, check_same_thread=False)
 
     def encrypt_value(self, value):
@@ -71,6 +73,7 @@ class UserDB:
         if not isinstance(value, str):
             value = str(value)
         return ''.join(self.decryption_key.get(value[i:i + 5], value[i:i + 5]) for i in range(0, len(value), 5))
+
 
     def create_user_tables(self):
         """Crea las tablas relacionadas con usuarios."""
