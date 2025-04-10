@@ -4,7 +4,7 @@ Este archivo tiene como objetivo proporcionar las credenciales iniciales y las c
 - Recomendamos cambiar la ubicación de este archivo a una carpeta segura.
 - El contenido de este programa podría ser utilizado de forma malintencionada si es expuesto.
 
-***MagicCorp***
+         ***MagicCorp***
           Negocio: ASD
    Versión: 
    Tipo de instalación:

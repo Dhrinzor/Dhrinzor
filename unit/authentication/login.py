@@ -1,6 +1,7 @@
 import flet as ft
 import threading
 import time
+#from DB.user import UserDB
 #from unit.dashboard.dashboard import DashboardPage  # Importar DashboardPage
 
 # Importación de utilidades de colores y tamaños  
@@ -13,6 +14,7 @@ class LoginPage(ft.Control):
     def __init__(self, main_app):  
         super().__init__()  
         self.main_app = main_app  
+        #self.dbuser = UserDB()
         self.list_alerts = {
             "ALpassword": "¡Error! Usuario o contraseña incorrecta.",
             "ALvacios": "¡Error! Existen campos vacíos.",
