@@ -84,7 +84,7 @@ class PageContent:
 
             shutil.copytree(src_path, destination_src_path, dirs_exist_ok=True)
             update_progress("Carpetas copiada con éxito.")
-#############################################################################################
+
             # Leer el nombre del negocio desde key.txt
             key_file_path = os.path.join(magiccorp_path, "key.txt")
             version_file_path = os.path.join(os.getcwd(), "version.txt")
@@ -136,9 +136,7 @@ class PageContent:
 
             if not os.path.exists(business_db_path):
                 raise FileNotFoundError(f"No se encontró el archivo de base de datos: {business_db_path}")
-            
 
-##################################################################################################
             # Configurar las tablas según el modo seleccionado
             if self.selected_mode == "Local":
                 update_progress("Base de Datos para el modo 'Local'configurada con exito.")
@@ -269,7 +267,7 @@ class PageContent:
             padding=ft.padding.all(20),
             content=ft.Column(
                 controls=[
-                    ft.Text("Asistente de Instalación - MagicCorp", size=28, weight=ft.FontWeight.BOLD, color=ft.colors.BLUE),
+                    ft.Text("Asistente de Instalación  MagicCorp", size=28, weight=ft.FontWeight.BOLD, color=ft.colors.BLUE,text_align=ft.TextAlign.CENTER,),
                     description_text,  # Texto introductorio
                     mode_selector,  # Radios para seleccionar el modo
                     ft.Divider(height=20, thickness=2),  # Línea divisoria para estética

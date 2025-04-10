@@ -26,13 +26,51 @@ class MagicCorp:
         # Ejecutar la sincronización en segundo plano
         self._sync_repository()
 
-        # Verificar si la carpeta MagicCorp existe
-        if os.path.exists(self.magiccorp_path):
-            print(f"La carpeta '{self.magiccorp_path}' ya existe. Cargando la ventana de login...")
+        # Verificar si la carpeta MagicCorp y sus contenidos existen
+        if self._verify_magiccorp_contents():
+            print(f"Todos los archivos y carpetas necesarios en '{self.magiccorp_path}' existen. Cargando la ventana de login...")
             self.navigate("login")
         else:
-            print(f"La carpeta '{self.magiccorp_path}' no existe. Cargando la página de instalación...")
+            print(f"Faltan archivos o carpetas en '{self.magiccorp_path}'. Cargando la página de instalación...")
             self._load_installation_page()
+
+    def _verify_magiccorp_contents(self):
+        """Verifica si la carpeta MagicCorp contiene los archivos y subcarpetas necesarios."""
+        required_files = [
+            "key.txt",
+            "license.txt",
+            "sync_version.bat",
+            "version.txt",
+            "README.md",
+            "install.nsi",
+            "requirements.txt"
+        ]
+        required_folders = [
+            "DB",
+            "src"
+        ]
+
+        # Verificar que la carpeta MagicCorp existe
+        if not os.path.exists(self.magiccorp_path):
+            print("La carpeta MagicCorp no existe.")
+            return False
+
+        # Verificar la existencia de archivos requeridos
+        for file in required_files:
+            file_path = os.path.join(self.magiccorp_path, file)
+            if not os.path.exists(file_path):
+                print(f"Archivo faltante: {file}")
+                return False
+
+        # Verificar la existencia de carpetas requeridas
+        for folder in required_folders:
+            folder_path = os.path.join(self.magiccorp_path, folder)
+            if not os.path.exists(folder_path):
+                print(f"Carpeta faltante: {folder}")
+                return False
+
+        print("Todos los archivos y carpetas necesarios existen.")
+        return True
 
     def _sync_repository(self):
         # Ruta del archivo .bat

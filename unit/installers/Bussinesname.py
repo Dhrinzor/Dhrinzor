@@ -63,7 +63,7 @@ class PageContent:
         def on_continue(_):
             business_name = business_name_field.value.upper().strip()  # Obtener el nombre del negocio
             if not business_name:
-                show_error_message("El campo no puede estar vacío.")  # Mostrar error si está vacío
+                show_error_message("Por favor, ingrese un nombre válido para continuar.")  # Mostrar error si está vacío
                 return
             try:
                 # Actualizar el archivo key.txt con el nombre del negocio
@@ -74,7 +74,7 @@ class PageContent:
 
                 # Actualizar el checkbox correspondiente en `InstallPage`
                 if hasattr(self.app, "_update_checkboxes"):
-                    self.app._update_checkboxes("Bussinesname")  # Activar el checkbox correspondiente
+                    self.app._update_checkboxes("BusinessName")  # Activar el checkbox correspondiente
                 else:
                     print("Error: No se pudo actualizar el checkbox.")
 
@@ -86,35 +86,36 @@ class PageContent:
 
         # Campo de entrada del nombre del negocio
         business_name_field = ft.TextField(
-            label="Nombre del negocio",
-            hint_text="Escriba el nombre aquí",
+            label="Nombre del Negocio:",
+            hint_text="Escriba el nombre de su empresa aquí",
             width=500,
             border_color=ft.colors.BLACK,
             color=ft.colors.BLACK,
-            focused_border_color=ft.colors.BLACK,
-            cursor_color=ft.colors.BLACK,
+            focused_border_color=ft.colors.BLUE,
+            cursor_color=ft.colors.BLUE,
             on_change=validate_entry,  # Validación de entrada
         )
 
         # Botón Continuar siempre habilitado
         continue_button = ft.ElevatedButton(
-            text="Continuar",
+            text="Registrar Negocio",
             on_click=on_continue,  # Intentar actualizar la base de datos y manejar errores
             bgcolor=ft.colors.GREEN,
             color=ft.colors.WHITE,
+            icon=ft.icons.CHECK_CIRCLE,  # Icono más profesional
         )
 
         # Contenedor emergente para mensajes de error
         error_banner = ft.Container(
             visible=False,  # Inicialmente oculto
-            bgcolor=ft.colors.GREY_300,  # Fondo gris claro para mayor elegancia
+            bgcolor=ft.colors.RED,  # Fondo rojo para mayor claridad de error
             padding=ft.padding.all(10),
             border_radius=10,
             content=ft.Row(
                 controls=[
                     ft.Text(
                         value="",  # El mensaje dinámico se mostrará aquí
-                        color=ft.colors.BLACK,  # Texto negro para mayor claridad
+                        color=ft.colors.WHITE,  # Texto blanco sobre fondo rojo
                         weight=ft.FontWeight.BOLD,
                     ),
                     ft.ElevatedButton(
@@ -128,60 +129,62 @@ class PageContent:
             ),
         )
 
-        return ft.Container(
-            bgcolor=ft.colors.WHITE,
-            expand=True,
+        # Título y descripción inicial mejorados
+        title_container = ft.Container(
+            bgcolor=ft.colors.BLUE,
             padding=ft.padding.all(20),
+            border_radius=10,
             content=ft.Column(
                 controls=[
+                    ft.Text(
+                        "Registrar Nombre de su Negocio",
+                        size=32,
+                        weight=ft.FontWeight.BOLD,
+                        color=ft.colors.WHITE,
+                        text_align=ft.TextAlign.CENTER,
+                    ),
+                    ft.Text(
+                        "Este nombre será el identificador principal de su negocio y no podrá cambiarse posteriormente.",
+                        size=16,
+                        color=ft.colors.WHITE,
+                        text_align=ft.TextAlign.CENTER,
+                    ),
+                ],
+                spacing=5,
+                alignment=ft.MainAxisAlignment.CENTER,
+            ),
+        )
+
+        return ft.Container(
+            bgcolor=ft.colors.GREY_100,
+            expand=True,
+            padding=ft.padding.all(10),
+            content=ft.Column(
+                controls=[
+                    title_container,
+                    ft.Container(margin=ft.margin.only(top=5)),
                     ft.Container(
                         bgcolor=ft.colors.WHITE,
-                        padding=ft.padding.all(15),
-                        border_radius=10,
-                        content=ft.Text(
-                            "Registrar Negocio",
-                            size=28,
-                            weight=ft.FontWeight.BOLD,
-                            color=ft.colors.BLACK,
-                            text_align="center",
-                        ),
-                    ),
-                    ft.Container(margin=ft.margin.only(top=20)),
-                    ft.Container(
-                        bgcolor=ft.colors.GREY_200,
                         padding=ft.padding.all(15),
                         border_radius=10,
                         content=ft.Column(
                             controls=[
                                 ft.Text(
-                                    "Por favor, proporcione el nombre que representará a su negocio.",
+                                    "Proporcione el nombre de su empresa, este será el identificador de su organización.",
                                     size=16,
                                     color=ft.colors.BLACK,
-                                    text_align="left",
-                                ),
-                                ft.Text(
-                                    "Este será el identificador principal de su entidad, almacén u organización.",
-                                    size=16,
-                                    color=ft.colors.BLACK,
-                                    text_align="left",
-                                ),
-                                ft.Text(
-                                    "Este nombre no podrá modificarse en el futuro.",
-                                    size=18,
-                                    color=ft.colors.BLACK,
-                                    text_align="left",
+                                    text_align=ft.TextAlign.LEFT,
                                 ),
                                 business_name_field,
                             ],
-                            spacing=10,
+                            spacing=15,
                         ),
                     ),
-                    ft.Container(margin=ft.margin.only(top=30)),
+                    ft.Container(margin=ft.margin.only(top=5)),
                     ft.Container(
                         content=continue_button,
-                        alignment=ft.alignment.bottom_right,
+                        alignment=ft.alignment.bottom_center,
                     ),
-                    # Contenedor de error ubicado debajo del botón
                     error_banner,
                 ],
                 alignment=ft.MainAxisAlignment.CENTER,
