@@ -1,4 +1,4 @@
-﻿Contrato de Licencia para el Usuario Final (CLUF)
+Contrato de Licencia para el Usuario Final (CLUF)
 IMPORTANTE: LEA DETENIDAMENTE ANTES DE USAR ESTE SOFTWARE
 Este contrato de licencia para el usuario final (CLUF) constituye un acuerdo legal entre usted (el "Usuario") y Dhrinzor Corporation. Al instalar, copiar o usar este software de cualquier forma, usted acepta los términos y condiciones establecidos en este contrato. Si no está de acuerdo con los términos, debe desinstalar el software inmediatamente y ponerse en contacto con el servicio de atención al cliente de Dhrinzor Corporation a través del correo electrónico corporationdhrinzor@gmail.com para obtener un reembolso completo, siempre que lo haga dentro de los primeros treinta (30) días posteriores a la compra.
 
@@ -15,7 +15,6 @@ El Usuario tiene prohibido:
 - Transferir, vender, alquilar, arrendar o conceder sublicencias del Programa a terceros sin el consentimiento previo y por escrito de Dhrinzor Corporation.
 - Utilizar el Programa para fines comerciales, tales como en cibercafés, centros de juegos o establecimientos similares. Para uso comercial, póngase en contacto con dhrinzordh@gmail.com para obtener un contrato de licencia especial.
 
-
 4. Terminación
 Este contrato será válido hasta su terminación. Dhrinzor Corporation se reserva el derecho de finalizar el CLUF si el Usuario incumple alguno de sus términos. En tal caso, el Usuario debe desinstalar y eliminar todas las copias del Programa inmediatamente.
 
@@ -24,7 +23,6 @@ El Programa se proporciona "tal cual" sin ninguna garantía expresa o implícita
 - Reparar el defecto.
 - Proporcionar un producto similar o de menor valor.
 - Reembolsar el precio de compra.
-
 
 6. Limitación de Responsabilidad
 Dhrinzor Corporation y sus afiliados no serán responsables de daños directos, indirectos, incidentales o consecuentes derivados del uso del Programa. Esto incluye, pero no se limita a, pérdida de ingresos, interrupción del negocio o fallos de sistemas informáticos.

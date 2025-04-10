@@ -1,19 +1,20 @@
 import os
 import sqlite3
 
-
 class BusinessDB:
     def __init__(self, db_path, business_name):
         self.db_path = db_path
         self.business_name = business_name
 
-        # Asegurarse de que la carpeta de destino exista
-        if not os.path.exists(self.db_path):
-            os.makedirs(self.db_path)  # Crea la carpeta y cualquier subcarpeta necesaria
-            print(f"Carpeta creada: {self.db_path}")
-
         # Ruta específica del archivo de base de datos
         self.business_db_path = os.path.join(self.db_path, f"DB_{self.business_name}.db")
+
+    def prepare_database(self):
+        """Crea la carpeta y el archivo de base de datos si no existen."""
+        # Crear la carpeta de destino si no existe
+        if not os.path.exists(self.db_path):
+            os.makedirs(self.db_path)
+            print(f"Carpeta creada: {self.db_path}")
 
         # Crear el archivo de base de datos si no existe
         if not os.path.exists(self.business_db_path):
@@ -25,6 +26,8 @@ class BusinessDB:
 
     def connect(self):
         """Conecta a la base de datos específica del negocio."""
+        if not os.path.exists(self.business_db_path):
+            raise FileNotFoundError(f"El archivo de base de datos no existe: {self.business_db_path}")
         return sqlite3.connect(self.business_db_path, check_same_thread=False)
 
     def create_business_table(self):
@@ -40,27 +43,18 @@ class BusinessDB:
             INSERT OR IGNORE INTO negocio (nombre) VALUES (?)
             """, (self.business_name,))
             print(f"Tabla `negocio` creada y configurada para el negocio: {self.business_name}")
-            
+
 from DB.KeyManager import KeyManager
+
 class UserDB:
     def __init__(self, business_db_path):
-        """Inicializa la clase UserDB con la ruta de la base de datos."""
         self.business_db_path = business_db_path
-
-        # Asegurarse de que la carpeta y el archivo de base de datos existen
-        self._prepare_database()
-
-        # Inicializar KeyManager
-        self.key_manager = KeyManager()
-        self.encryption_key = self.key_manager.encryption_key
-        self.decryption_key = self.key_manager.decryption_key
-
-        # Crear las tablas relacionadas con usuarios
-        self.create_user_tables()
-
-    def _prepare_database(self):
+        self.key_manager = KeyManager()  # Crear instancia de KeyManager 
+        self.encryption_key = self.key_manager.encryption_key  # Obtener la clave de encriptación 
+        self.decryption_key = self.key_manager.decryption_key  # Obtener la clave de desencriptación
+    def prepare_database(self):
         """Crea la carpeta y el archivo de base de datos si no existen."""
-        # Asegurarse de que la carpeta para la base de datos exista
+        # Crear la carpeta de destino si no existe
         folder_path = os.path.dirname(self.business_db_path)
         if not os.path.exists(folder_path):
             os.makedirs(folder_path)
@@ -91,6 +85,7 @@ class UserDB:
             value = str(value)
         return ''.join(self.decryption_key.get(value[i:i + 5], value[i:i + 5]) for i in range(0, len(value), 5))
 
+ 
 
     def create_user_tables(self):
         """Crea las tablas relacionadas con usuarios."""

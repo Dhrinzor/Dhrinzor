@@ -5,128 +5,102 @@ import importlib
 from unit.authentication.login import LoginPage  # Asegúrate de que el path sea correcto
 from unit.authentication.signup import SignupPage  # Asegúrate de que el path sea correcto
 
-
-class MagicCorp:
+class MainApp:
     def __init__(self):
-        self.installation_path = r"C:\Program Files (x86)\The Magic Card"  # Ruta de instalación
-        self.magiccorp_path = r"C:\MagicCorp"  # Ruta de la carpeta MagicCorp
-        self.login_page = LoginPage(self)  # Instanciamos LoginPage al inicializar el programa
+        # Propiedades Globales
+        self.page = None
+        self.login_page = LoginPage(self)
         self.signup_page = SignupPage(self)
+        self.magiccorp_path = r"C:\MagicCorp"  # Ruta principal
+        self.required_files = [  # Archivos necesarios
+            "key.txt",
+            "license.txt",
+            "sync_version.bat",
+            "version.txt",
+            "test.txt",
+            "README.md",
+            "install.nsi",
+            "requirements.txt"
+        ]
+        self.required_folders = [  # Carpetas necesarias
+            "DB",
+            "src"
+        ]
 
     def main(self, page: ft.Page):
-        # Configuración de la ventana
+        # Configuración inicial de la ventana
         self.page = page
+        self.page.title = "MagicCorp Software"
         self.page.expand = True
         self.page.padding = 0
         self.page.vertical_alignment = ft.MainAxisAlignment.CENTER
         self.page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
         self.page.theme_mode = ft.ThemeMode.SYSTEM
-        self.page.window_maximized = True  # Maximiza la ventana al iniciarse
 
-        # Verificar los contenidos requeridos
-        self.run()
+        # Configuración de dimensiones de la ventana
+        self.page.window.maximized = True  # Maximizar ventana al inicio
 
-    def run(self):
-        # Ejecutar la sincronización en segundo plano
-        self._sync_repository()
-
-        # Verificar si la carpeta MagicCorp y sus contenidos existen
+        # Verificar si los archivos y carpetas necesarios existen
         if self._verify_magiccorp_contents():
-            print(f"Todos los archivos y carpetas necesarios en '{self.magiccorp_path}' existen. Cargando la ventana de login...")
-            self.navigate("login")
+            print("Todos los archivos y carpetas necesarios existen. Cargando la ventana de inicio...")
+            self.page.add(self.login_page.build())  # Carga la página de login
         else:
-            print(f"Faltan archivos o carpetas en '{self.magiccorp_path}'. Cargando la página de instalación...")
-            self._load_installation_page()
+            print("Archivos o carpetas faltantes. Redirigiendo a la instalación...")
+            self._load_installation_page()  # Navegar a la página de instalación
+
+        self.page.update()
 
     def _verify_magiccorp_contents(self):
-        """Verifica si la carpeta MagicCorp contiene los archivos y subcarpetas necesarios."""
-        # Archivos requeridos
-        required_files = [
-            "key.txt",
-            "license.txt",
-            "sync_version.bat",
-            "version.txt",
-            "test.txt",  # Nuevo archivo requerido
-            "README.md",
-            "install.nsi",
-            "requirements.txt"
-        ]
-
-        # Carpetas requeridas
-        required_folders = [
-            "DB",
-            "src"
-        ]
-
-        # Verificar que la carpeta MagicCorp existe
+        """Verifica que los archivos y carpetas requeridos estén presentes en la ruta."""
+        # Verificar carpeta principal
         if not os.path.exists(self.magiccorp_path):
-            print("La carpeta MagicCorp no existe.")
+            print(f"No se encontró la carpeta principal en {self.magiccorp_path}.")
             return False
 
-        # Verificar la existencia de archivos requeridos
-        for file in required_files:
+        # Verificar archivos requeridos
+        for file in self.required_files:
             file_path = os.path.join(self.magiccorp_path, file)
             if not os.path.exists(file_path):
                 print(f"Archivo faltante: {file}")
                 return False
 
-        # Verificar la existencia de carpetas requeridas
-        for folder in required_folders:
+        # Verificar carpetas requeridas
+        for folder in self.required_folders:
             folder_path = os.path.join(self.magiccorp_path, folder)
             if not os.path.exists(folder_path):
                 print(f"Carpeta faltante: {folder}")
                 return False
 
-        print("Todos los archivos y carpetas necesarios existen.")
+        # Si todo está presente
+        print("Todos los archivos y carpetas requeridos existen.")
         return True
 
-    def _sync_repository(self):
-        # Ruta del archivo .bat
-        bat_file_path = os.path.join(os.getcwd(), "sync_version.bat")
-        if os.path.exists(bat_file_path):
-            try:
-                # Ejecutar el archivo .bat en segundo plano
-                subprocess.Popen(bat_file_path, shell=True)
-                print("Sincronización con GitHub iniciada en segundo plano.")
-            except Exception as e:
-                print(f"Error al ejecutar el archivo .bat: {e}")
-        else:
-            print(f"El archivo {bat_file_path} no existe.")
-
     def _load_installation_page(self):
-        # Método privado para cargar el módulo de instalación
+        """Carga la página de instalación si faltan archivos o carpetas."""
         try:
-            install_module = importlib.import_module("unit.install")
-            install_module.InstallPage(self.page, self).show()  # Pasamos `self` como referencia al objeto principal
+            print("Mostrando la página de instalación...")
+            install_module = importlib.import_module("unit.install")  # Cargar módulo de instalación dinámicamente
+            install_module.InstallPage(self.page, self).show()  # Mostrar la página de instalación
         except Exception as e:
-            print(f"Error al cargar el módulo de instalación: {e}")
+            print(f"Error al cargar la página de instalación: {e}")
 
     def navigate(self, page_name):
-        # Limpiar los controles actuales de la página
+        """Navegación entre páginas."""
         self.page.controls.clear()
 
-        # Navegación según el nombre de la página
+        # Cargar la página correspondiente
         if page_name == "login":
-            self.page.add(self.login_page.build())  # Agrega la estructura de LoginPage
+            self.page.add(self.login_page.build())
         elif page_name == "signup":
-            print("Navegando a la página de registro (signup)")
-            self.page.add(self.signup_page.build())  # Agrega la estructura de SignupPage
-        elif page_name == "dashboard":
-            print("Navegando al dashboard")
-            # Aquí se cargaría la página del dashboard
+            self.page.add(self.signup_page.build())
         else:
             print(f"Página desconocida: {page_name}")
 
-        # Actualizar la página con los nuevos controles
         self.page.update()
-
-    def close_application(self):
-        print("Cerrando la aplicación...")
-        os._exit(0)  # Salida inmediata del programa
 
 
 if __name__ == "__main__":
-    app = MagicCorp()
+    app = MainApp()
     ft.app(target=app.main)
     
 # import flet as ft

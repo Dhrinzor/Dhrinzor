@@ -122,19 +122,31 @@ class PageContent:
 
         # Acción al presionar "Continuar"
         def on_continue(_):
-            business_name = business_name_field.value.upper().strip()  # Obtener el nombre del negocio
+            # Obtener el nombre del negocio desde el campo de entrada
+            business_name = business_name_field.value.upper().strip()
+            
             if not business_name:
-                show_error_message("Por favor, ingrese un nombre válido para continuar.")  # Mostrar error si está vacío
+                # Mostrar un mensaje de error si el nombre del negocio está vacío
+                show_error_message("Por favor, ingrese un nombre válido para continuar.")
                 return
+            
             try:
                 # Crear el archivo key.txt con el formato especificado
                 create_key_file(business_name)
 
-                # Ruta de la carpeta de bases de datos
+                # Ruta de la carpeta de base de datos
                 db_path = os.path.join("C:\\", "MagicCorp", "DB")
 
+                # Crear la carpeta de la base de datos si no existe
+                if not os.path.exists(db_path):
+                    os.makedirs(db_path)  # Crear la carpeta
+                    print(f"Carpeta creada: {db_path}")
+
                 # Inicializar la base de datos pasando la ruta y el nombre del negocio
-                BusinessDB(db_path, business_name)
+                business_db = BusinessDB(db_path, business_name)
+
+                # Invocar explícitamente el método para preparar la base de datos
+                business_db.prepare_database()  # Crea las tablas y el archivo .db
 
                 # Actualizar el checkbox correspondiente en `InstallPage`
                 if hasattr(self.app, "_update_checkboxes"):
@@ -142,10 +154,11 @@ class PageContent:
                 else:
                     print("Error: No se pudo actualizar el checkbox.")
 
-                # Navegar a la siguiente página si no hay errores
+                # Navegar a la siguiente página si todo está correcto
                 self.navigate_to("unit.installers.Install_tools")
+
             except Exception as ex:
-                # Mostrar el error en un banner si ocurre un problema
+                # Mostrar un mensaje de error si ocurre un problema
                 show_error_message(f"Error: {str(ex)}")
 
         # Campo de entrada del nombre del negocio
