@@ -2,8 +2,6 @@ import os
 import shutil
 import flet as ft
 from DB.db_setup import BusinessDB  # Importar la función para inicializar la base de datos
-
-
 class PageContent:
     def __init__(self, page, navigate_to, app):
         self.page = page
@@ -29,35 +27,98 @@ class PageContent:
             self.page.update()  # Refrescar la página
 
         # Actualizar el archivo key.txt con el nombre del negocio
-        def update_key_file(business_name):
+        def create_key_file(business_name):
+            """Crea o actualiza el archivo key.txt en C:\MagicCorp con el formato especificado."""
             try:
-                # Ruta del archivo fuente (local)
-                source_key_path = os.path.join(os.getcwd(), "key.txt")
-                if not os.path.exists(source_key_path):
-                    raise FileNotFoundError("No se encontró el archivo 'key.txt' en la raíz local.")
-
-                # Leer contenido actual del archivo
-                with open(source_key_path, "r", encoding="utf-8") as file:
-                    content = file.readlines()
-
-                # Actualizar el campo 'Negocio:'
-                for i, line in enumerate(content):
-                    if "Negocio:" in line:
-                        content[i] = f"          Negocio: {business_name}\n"
-
-                # Escribir el contenido actualizado
-                with open(source_key_path, "w", encoding="utf-8") as file:
-                    file.writelines(content)
-
-                # Copiar el archivo actualizado a C:\MagicCorp
-                destination_key_path = os.path.join("C:\\", "MagicCorp", "key.txt")
+                # Ruta de la carpeta y archivo key.txt
                 magiccorp_path = os.path.join("C:\\", "MagicCorp")
+                key_file_path = os.path.join(magiccorp_path, "key.txt")
+
+                # Asegurarse de que la carpeta MagicCorp existe
                 if not os.path.exists(magiccorp_path):
-                    os.mkdir(magiccorp_path)  # Crear carpeta MagicCorp si no existe
-                shutil.copy(source_key_path, destination_key_path)
-                print(f"Archivo 'key.txt' actualizado y copiado exitosamente a {destination_key_path}")
+                    os.makedirs(magiccorp_path)  # Crea la carpeta si no existe
+                    print(f"Carpeta creada: {magiccorp_path}")
+
+                # Contenido del archivo key.txt con el formato solicitado
+                key_file_content = f"""
+        Documento de Seguridad y Credenciales del Usuario
+        "Propósito del Documento"
+        Este archivo tiene como objetivo proporcionar las credenciales iniciales y las configuraciones necesarias para el uso correcto del software MagicCorp. 
+        - Manténgalo seguro y fuera del alcance de terceros no autorizados.
+        - Recomendamos cambiar la ubicación de este archivo a una carpeta segura.
+        - El contenido de este programa podría ser utilizado de forma malintencionada si es expuesto.
+
+        *****************MagicCorp*****************
+        Negocio: {business_name}
+            Versión: 
+            Tipo de instalación:
+
+        ****************PROTECCIÓN ****************
+        1. **Control de Acceso:**
+        - **Cifrado de Datos:** Todos los datos sensibles están cifrados para evitar accesos no autorizados.  
+        - **Gestión de Usuarios:** Roles y permisos asignados para limitar acciones dentro del sistema.
+
+        2. **Respaldo y Recuperación:**
+        - **Copias de Seguridad:** Generación automática de copias de seguridad para proteger la información del negocio.  
+        - **Recuperación de Contraseñas:** Opciones seguras para recuperar credenciales en caso de pérdida.
+
+        3. **Integridad del Sistema:**
+        - **Verificación de Integridad:** Mecanismos para detectar cambios no autorizados en los archivos del programa.  
+        - **Auditorías de Seguridad:** Registro de todas las actividades críticas realizadas en el sistema.
+
+        4. **Actualizaciones Automáticas:**
+        - **Parcheo de Vulnerabilidades:** Actualización constante del sistema para mitigar riesgos conocidos.  
+        - **Compatibilidad:** Asegura que el programa funcione en entornos actuales y futuros.
+
+        5. **Protección del Entorno:**
+        - **Bloqueo de Sesión Inactivo:** Bloqueo automático de la sesión tras un tiempo de inactividad.  
+        - **Firewall:** Recomendaciones para configurar un firewall que limite conexiones no autorizadas al programa.
+
+        6. **Política de Contraseñas:**
+        - **Requisitos de Contraseñas Fuertes:** Exigir el uso de contraseñas robustas con caracteres especiales, números y mayúsculas.  
+        - **Expiración de Contraseñas:** Renovación periódica de contraseñas para evitar accesos comprometidos.
+
+        Instrucciones de Instalación
+        - Extraer los archivos del paquete .RAR
+        - Ejecutar la instalación en un entorno administrativo para garantizar permisos adecuados.
+        - Ingresar las credenciales iniciales:- Usuario: admin
+        - Contraseña: GsJEs/QT5.EeMEj4J*m4Bf81
+
+        ****************Detalles Técnicos Adicionales****************
+        - **Arquitectura del Sistema:** 64 bits 
+        - **Requisitos Mínimos:**  
+        - Memoria RAM: Al menos 4 GB.  
+        - Almacenamiento: 1 GB de espacio libre en disco.  
+        - Resolución: 1280x800 para una experiencia óptima.  
+        - **Frameworks Utilizados:**  
+        - Flet.  
+        - SQLite para la gestión de la base de datos.  
+        - **Tecnologías de Seguridad:**  
+        - Cifrado DHR para protección de datos sensibles.    
+        - **Compatibilidad:**  
+        - Compatible con versiones superiores de Windows 10 (incluido Windows 11).  
+        - Funciona con Python 3.13.3 o superior.  
+        - **Versión del Software:**  
+        - Fecha de Compilación: [21-6-25]  
+        - Última Actualización: [21-6-25]  
+        - **Licencia:**  
+        - Uso bajo licencia individual.  
+        - **Red y Conexión:**  
+        - Conexión requerida para la sincronización con servidores No soportada.  
+        
+        ****************Responsabilidad del Usuario****************
+        El usuario final es responsable de mantener las credenciales en un lugar seguro. No compartir ni distribuir este documento a personas no autorizadas.
+
+        © 2025 - Dhrinzor Corporation. Todos los derechos reservados.
+        """
+
+                # Escribir el contenido en key.txt
+                with open(key_file_path, "w", encoding="utf-8") as file:
+                    file.write(key_file_content)
+                print(f"Archivo key.txt creado correctamente en {key_file_path}")
+
             except Exception as ex:
-                raise Exception(f"Error al actualizar el archivo 'key.txt': {str(ex)}")
+                raise Exception(f"Error al crear el archivo key.txt: {str(ex)}")
 
         # Acción al presionar "Continuar"
         def on_continue(_):
@@ -66,13 +127,13 @@ class PageContent:
                 show_error_message("Por favor, ingrese un nombre válido para continuar.")  # Mostrar error si está vacío
                 return
             try:
-                # Actualizar el archivo key.txt con el nombre del negocio
-                update_key_file(business_name)
+                # Crear el archivo key.txt con el formato especificado
+                create_key_file(business_name)
 
                 # Ruta de la carpeta de bases de datos
                 db_path = os.path.join("C:\\", "MagicCorp", "DB")
 
-                # Intentar inicializar la base de datos pasando la ruta y el nombre del negocio
+                # Inicializar la base de datos pasando la ruta y el nombre del negocio
                 BusinessDB(db_path, business_name)
 
                 # Actualizar el checkbox correspondiente en `InstallPage`

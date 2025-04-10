@@ -46,14 +46,14 @@ class PageContent:
                 self.page.update()
                 time.sleep(0.2)  # Pausa más breve para acelerar pero mantener visualización en tiempo real
 
-            # Crear carpetas necesarias
-            if not os.path.exists(magiccorp_path):
-                os.mkdir(magiccorp_path)
-                update_progress("Creando carpeta principal MagicCorp...")
+            # # Crear carpetas necesarias
+            # if not os.path.exists(magiccorp_path):
+            #     os.mkdir(magiccorp_path)
+            #     update_progress("Creando carpeta principal MagicCorp...")
 
-            if not os.path.exists(db_dest_path):
-                os.mkdir(db_dest_path)
-                update_progress("Creando carpeta de bases de datos...")
+            # if not os.path.exists(db_dest_path):
+            #     os.mkdir(db_dest_path)
+            #     update_progress("Creando carpeta de bases de datos...")
 
             # Copiar archivos
             files_to_copy = ["license.txt", "sync_version.bat", "version.txt", "test.txt", "README.md", "install.nsi", "requirements.txt"]
@@ -87,14 +87,14 @@ class PageContent:
 
             # Leer el nombre del negocio desde key.txt
             key_file_path = os.path.join(magiccorp_path, "key.txt")
-            version_file_path = os.path.join(os.getcwd(), "version.txt")
             if not os.path.exists(key_file_path):
                 pb.value = 0
                 pb.color = ft.colors.RED
                 success_message.value += "Error: No se encontró el archivo key.txt\n"
                 self.page.update()
                 raise FileNotFoundError(f"No se encontró el archivo key.txt en {magiccorp_path}.")
-
+            
+            version_file_path = os.path.join(os.getcwd(), "version.txt")
             if not os.path.exists(version_file_path):
                 pb.value = 0
                 pb.color = ft.colors.RED

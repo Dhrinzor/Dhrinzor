@@ -62,13 +62,6 @@ class DBNegocio:
                 )
             """)
             cursor.execute("""
-                CREATE TABLE IF NOT EXISTS login_history (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    username TEXT NOT NULL,
-                    login_time TIME NOT NULL
-                )
-            """)
-            cursor.execute("""
                 CREATE TABLE IF NOT EXISTS productos_existentes (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     producto TEXT NOT NULL,
@@ -83,17 +76,6 @@ class DBNegocio:
                     fecha TEXT,
                     transferencia TEXT,
                     cafe_id INTEGER
-                )
-            """)
-            cursor.execute("""
-                CREATE TABLE IF NOT EXISTS users (
-                    id INTEGER PRIMARY KEY,
-                    Enombre TEXT NOT NULL,
-                    Eusuario TEXT NOT NULL UNIQUE,
-                    Econtrasenia TEXT NOT NULL,
-                    rol TEXT NOT NULL,
-                    establecimiento TEXT,
-                    telefono TEXT
                 )
             """)
 

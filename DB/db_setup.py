@@ -1,20 +1,28 @@
 import os
 import sqlite3
-from DB.KeyManager import KeyManager
+
 
 class BusinessDB:
     def __init__(self, db_path, business_name):
         self.db_path = db_path
         self.business_name = business_name
 
-        # Verificar que el archivo de base de datos específico del negocio exista
+        # Asegurarse de que la carpeta de destino exista
+        if not os.path.exists(self.db_path):
+            os.makedirs(self.db_path)  # Crea la carpeta y cualquier subcarpeta necesaria
+            print(f"Carpeta creada: {self.db_path}")
+
+        # Ruta específica del archivo de base de datos
         self.business_db_path = os.path.join(self.db_path, f"DB_{self.business_name}.db")
+
+        # Crear el archivo de base de datos si no existe
         if not os.path.exists(self.business_db_path):
             open(self.business_db_path, "w").close()
             print(f"Archivo de base de datos creado: {self.business_db_path}")
 
         # Crear la tabla negocio
         self.create_business_table()
+
     def connect(self):
         """Conecta a la base de datos específica del negocio."""
         return sqlite3.connect(self.business_db_path, check_same_thread=False)
@@ -25,12 +33,15 @@ class BusinessDB:
             conn.execute("""
             CREATE TABLE IF NOT EXISTS negocio (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
-                nombre TEXT NOT NULL UNIQUE)
+                nombre TEXT NOT NULL UNIQUE
+            )
             """)
             conn.execute("""
             INSERT OR IGNORE INTO negocio (nombre) VALUES (?)
             """, (self.business_name,))
             print(f"Tabla `negocio` creada y configurada para el negocio: {self.business_name}")
+            
+from DB.KeyManager import KeyManager          
 class UserDB:
     def __init__(self, business_db_path):
         self.business_db_path = business_db_path
