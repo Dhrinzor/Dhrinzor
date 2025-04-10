@@ -5,14 +5,14 @@ import flet as ft
 from DB.DB_Negocio import DBNegocio  # Importar la gestión de la base de datos
 from DB.DB_Local_Independiente import DBLocalIndependiente  # Importar la gestión de la base de datos
 from DB.DB_Local import DBLocal  # Importar la gestión de la base de datos
-
+from unit.globals.recursivo import Utils
 class PageContent:
     def __init__(self, page, navigate_to, app):
         self.page = page
         self.navigate_to = navigate_to
         self.app = app  # Referencia al objeto principal (`InstallPage`)
         self.selected_mode = None  # Variable para almacenar el modo seleccionado
-
+        self.recursivo = Utils()
     def install_process(self):
         # Verificar que se haya seleccionado un modo
         if not self.selected_mode:
@@ -149,7 +149,7 @@ class PageContent:
             update_progress("¡Instalación completada exitosamente!", add_to_list=False)
 
             # Mostrar mensaje final en success_message
-            success_message.value = "¡La instalación se realizó con éxito!"
+            success_message.value = "¡La instalación del modo "+self.selected_mode+" se realizó con éxito!"
             success_message.visible = True
             error_message.visible = False
             install_button.visible = False
@@ -180,7 +180,7 @@ class PageContent:
 
     def select_mode(self, e):
         self.selected_mode = e.control.value
-        print(f"Modo seleccionado: {self.selected_mode}")
+
 
     def show(self):
         # Barra de progreso inicial con bordes ovalados
@@ -263,14 +263,14 @@ class PageContent:
                     mode_selector,  # Radios para seleccionar el modo
                     ft.Divider(height=20, thickness=2),  # Línea divisoria para estética
                     pb,  # Barra de progreso con bordes ovalados
-                    file_list,  # ListView para mostrar el progreso
                     success_message,  # Mensaje de éxito
+                    file_list,  # ListView para mostrar el progreso
                     error_message,  # Mensaje de error
                     install_button,  # Botón para instalar
                     continue_button,  # Botón para continuar
                 ],
                 alignment=ft.MainAxisAlignment.CENTER,
-                spacing=20,
+                spacing=10,
             ),
         )
         

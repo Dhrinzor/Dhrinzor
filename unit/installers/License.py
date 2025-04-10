@@ -1,26 +1,16 @@
 import os
 import flet as ft
-
+from unit.globals.recursivo import Utils
 class PageContent:
     def __init__(self, page, navigate_to, app):
         self.page = page
         self.navigate_to = navigate_to
         self.app = app  # Referencia a `InstallPage`
-        
+        self.recursivo = Utils()
     def create_license_file(self):
-                #"""Crea o actualiza el archivo key.txt en C:\MagicCorp con el formato especificado."""
-                try:
-                    # Ruta de la carpeta y archivo key.txt
-                    magiccorp_path = os.path.join("C:\\", "MagicCorp")
-                    key_file_path = os.path.join(magiccorp_path, "license.txt")
-
-                    # Asegurarse de que la carpeta MagicCorp existe
-                    if not os.path.exists(magiccorp_path):
-                        os.makedirs(magiccorp_path)  # Crea la carpeta si no existe
-                        print(f"Carpeta creada: {magiccorp_path}")
-
+                archivo="license.txt"
                     # Contenido del archivo key.txt con el formato solicitado
-                    license_content = f"""Contrato de Licencia para el Usuario Final (CLUF)
+                license_content = f"""Contrato de Licencia para el Usuario Final (CLUF)
                 IMPORTANTE: LEA DETENIDAMENTE ANTES DE USAR ESTE SOFTWARE
                 Este contrato de licencia para el usuario final (CLUF) constituye un acuerdo legal entre usted (el "Usuario") y Dhrinzor Corporation. Al instalar, copiar o usar este software de cualquier forma, usted acepta los términos y condiciones establecidos en este contrato. Si no está de acuerdo con los términos, debe desinstalar el software inmediatamente y ponerse en contacto con el servicio de atención al cliente de Dhrinzor Corporation a través del correo electrónico corporationdhrinzor@gmail.com para obtener un reembolso completo, siempre que lo haga dentro de los primeros treinta (30) días posteriores a la compra.
 
@@ -56,14 +46,7 @@ class PageContent:
                 Este contrato se rige por las leyes aplicables en la jurisdicción del domicilio de Dhrinzor Corporation. Algunas jurisdicciones pueden no permitir ciertas limitaciones de garantía, por lo que algunas de las disposiciones aquí contenidas pueden no aplicarse en su caso.
                 """
 
-                    # Escribir el contenido en license.txt
-                    with open(key_file_path, "w", encoding="utf-8") as file:
-                        file.write(license_content)
-                    print(f"Archivo key.txt creado correctamente en {key_file_path}")
-
-                except Exception as ex:
-                    raise Exception(f"Error al crear el archivo license.txt: {str(ex)}")
-            
+                self.recursivo.crear_archivo( archivo, license_content)
 
     def show(self):
         # Crear el archivo de licencia si no existe

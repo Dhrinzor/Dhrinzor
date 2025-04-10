@@ -2,12 +2,15 @@ import os
 import shutil
 import flet as ft
 from DB.db_setup import BusinessDB  # Importar la función para inicializar la base de datos
+from unit.globals.recursivo import Utils
+
 class PageContent:
     def __init__(self, page, navigate_to, app):
         self.page = page
         self.navigate_to = navigate_to
         self.app = app  # Referencia a la instancia principal (`InstallPage`)
-
+        self.recursivo = Utils()
+        
     def show(self):
         # Mostrar mensaje de error en un contenedor emergente
         def show_error_message(message):
@@ -29,18 +32,8 @@ class PageContent:
         # Actualizar el archivo key.txt con el nombre del negocio
         def create_key_file(business_name):
             """Crea o actualiza el archivo key.txt en C:\MagicCorp con el formato especificado."""
-            try:
-                # Ruta de la carpeta y archivo key.txt
-                magiccorp_path = os.path.join("C:\\", "MagicCorp")
-                key_file_path = os.path.join(magiccorp_path, "key.txt")
-
-                # Asegurarse de que la carpeta MagicCorp existe
-                if not os.path.exists(magiccorp_path):
-                    os.makedirs(magiccorp_path)  # Crea la carpeta si no existe
-                    print(f"Carpeta creada: {magiccorp_path}")
-
-                # Contenido del archivo key.txt con el formato solicitado
-                key_file_content = f"""
+            archivo = "key.txt"
+            key_file_content = f"""
         Documento de Seguridad y Credenciales del Usuario
         "Propósito del Documento"
         Este archivo tiene como objetivo proporcionar las credenciales iniciales y las configuraciones necesarias para el uso correcto del software MagicCorp. 
@@ -113,13 +106,7 @@ class PageContent:
         """
 
                 # Escribir el contenido en key.txt
-                with open(key_file_path, "w", encoding="utf-8") as file:
-                    file.write(key_file_content)
-                print(f"Archivo key.txt creado correctamente en {key_file_path}")
-
-            except Exception as ex:
-                raise Exception(f"Error al crear el archivo key.txt: {str(ex)}")
-
+            self.recursivo.crear_archivo(archivo, key_file_content)
         # Acción al presionar "Continuar"
         def on_continue(_):
             # Obtener el nombre del negocio desde el campo de entrada
