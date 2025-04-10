@@ -119,8 +119,8 @@ class LoginPage(ft.Control):
         time.sleep(0.01)  # Ajusta el tiempo según sea necesario
         self.main_app.page.dialog.open = False
         self.main_app.page.update()     
-        self.main_app.active_user = self.main_app.dbuser.get_last_login_user()
-        self.main_app.rol = self.main_app.dbuser.get_user_role(self.main_app.active_user)
+        self.main_app.active_user = self.dbuser.get_last_login_user()
+        self.main_app.rol = self.dbuser.get_user_role(self.main_app.active_user)
         # Inicializa DashboardPage con los valores obtenidos
         #self.main_app.dashboard_page = DashboardPage(self.main_app)
 
