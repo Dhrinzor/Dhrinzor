@@ -49,9 +49,10 @@ from DB.KeyManager import KeyManager
 class UserDB:
     def __init__(self, business_db_path):
         self.business_db_path = business_db_path
-        self.key_manager = KeyManager()  # Crear instancia de KeyManager 
-        self.encryption_key = self.key_manager.encryption_key  # Obtener la clave de encriptación 
+        self.key_manager = KeyManager()  # Crear instancia de KeyManager
+        self.encryption_key = self.key_manager.encryption_key  # Obtener la clave de encriptación
         self.decryption_key = self.key_manager.decryption_key  # Obtener la clave de desencriptación
+
     def prepare_database(self):
         """Crea la carpeta y el archivo de base de datos si no existen."""
         # Crear la carpeta de destino si no existe
@@ -67,8 +68,7 @@ class UserDB:
 
     def connect(self):
         """Conecta a la base de datos."""
-        if not os.path.exists(self.business_db_path):
-            raise FileNotFoundError(f"El archivo de base de datos no existe: {self.business_db_path}")
+        self.prepare_database()  # Asegurarse de que la base de datos exista antes de conectarse
         return sqlite3.connect(self.business_db_path, check_same_thread=False)
 
     def encrypt_value(self, value):
@@ -135,6 +135,7 @@ class UserDB:
             SELECT * FROM users WHERE Eusuario = ? AND Econtraseña = ?
             """, (encrypted_user, encrypted_password)).fetchone()
             return user is not None
+        
     def password_exists(self, password):
         encrypted_password = self.encrypt_value(password)
         with self.connect() as conn:

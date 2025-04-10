@@ -180,7 +180,7 @@ class PageContent:
 
     def select_mode(self, e):
         self.selected_mode = e.control.value
-
+        print(f"Modo seleccionado: {self.selected_mode}")
 
     def show(self):
         # Barra de progreso inicial con bordes ovalados

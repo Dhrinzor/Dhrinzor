@@ -1,5 +1,4 @@
 import os
-import time
 import flet as ft
 
 class PageContent:
@@ -7,6 +6,7 @@ class PageContent:
         self.page = page
         self.navigate_to = navigate_to
         self.app = app  # Referencia al objeto principal (TheMagicCardApp o InstallPage)
+        self.modo = None  # Variable para almacenar el tipo de instalación
 
     def _finalize(self, event):
         # Revisar si se seleccionó "Crear acceso directo"
@@ -26,15 +26,38 @@ class PageContent:
         else:
             print("El usuario decidió no crear el acceso directo.")
 
+        # Leer el tipo de instalación desde key.txt
+        key_file_path = r"C:\MagicCorp\key.txt"
+        try:
+            if not os.path.exists(key_file_path):
+                self.modo = "Versión desconocida"
+                print("El archivo key.txt no existe en la ruta especificada.")
+            else:
+                with open(key_file_path, "r", encoding="utf-8") as file:
+                    for line in file:
+                        if "Tipo de instalación:" in line:
+                            self.modo = line.split(":")[1].strip()
+                            print(f"Tipo de instalación leído: {self.modo}")
+                            break
+                    else:
+                        self.modo = "No especificado"
+                        print("No se encontró 'Tipo de instalación' en key.txt.")
+        except Exception as e:
+            print(f"Error al leer el archivo key.txt: {str(e)}")
+            self.modo = "Error"
+
+        # Tomar acción según el tipo de instalación
+        if self.modo == "Negocio":
+            print("Redirigiendo a la página de inicio de sesión...")
+            self.app.navigate("login")  # Navegar al login usando el método principal
+        else:
+            print(f"No se realizará ninguna acción para el modo: {self.modo}")
+
         # Mensaje final dinámico
         finalize_button.text = "Completado"
         finalize_button.disabled = True
         final_message.value = "¡Instalación completada con éxito! Gracias por confiar en MagicCorp."
         self.page.update()
-
-        # Cargar la página de inicio de sesión
-        print("Redirigiendo a la página de inicio de sesión...")
-        self.app.navigate("login")  # Navegar al login usando el método principal
 
     def show(self):
         global finalize_button, create_shortcut_checkbox, final_message
@@ -55,7 +78,7 @@ class PageContent:
             on_click=self._finalize,
             bgcolor=ft.colors.GREEN,
             color=ft.colors.WHITE,
-            icon=ft.icons.CHECK,  # Icono profesional
+            icon=ft.icons.CHECK,
         )
 
         # Estructura de la página
