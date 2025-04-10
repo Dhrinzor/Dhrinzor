@@ -1,7 +1,7 @@
 import os
 import shutil
 import flet as ft
-from DB.db_setup import initialize_database  # Importar la función para inicializar la base de datos
+from DB.db_setup import BusinessDB  # Importar la función para inicializar la base de datos
 
 
 class PageContent:
@@ -69,8 +69,11 @@ class PageContent:
                 # Actualizar el archivo key.txt con el nombre del negocio
                 update_key_file(business_name)
 
-                # Intentar inicializar la base de datos
-                initialize_database(business_name)
+                # Ruta de la carpeta de bases de datos
+                db_path = os.path.join("C:\\", "MagicCorp", "DB")
+
+                # Intentar inicializar la base de datos pasando la ruta y el nombre del negocio
+                BusinessDB(db_path, business_name)
 
                 # Actualizar el checkbox correspondiente en `InstallPage`
                 if hasattr(self.app, "_update_checkboxes"):

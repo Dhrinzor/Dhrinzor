@@ -4,12 +4,12 @@ Este archivo tiene como objetivo proporcionar las credenciales iniciales y las c
 - Recomendamos cambiar la ubicación de este archivo a una carpeta segura.
 - El contenido de este programa podría ser utilizado de forma malintencionada si es expuesto.
 
-         ***MagicCorp***
-          Negocio: ASD
+      *********MagicCorp*********
+         Negocio:
    Versión: 
    Tipo de instalación:
 
-********PROTECCIÓN ******
+********PROTECCIÓN ********
 1. **Control de Acceso:**
    - **Cifrado de Datos:** Todos los datos sensibles están cifrados para evitar accesos no autorizados.  
    - **Gestión de Usuarios:** Roles y permisos asignados para limitar acciones dentro del sistema.

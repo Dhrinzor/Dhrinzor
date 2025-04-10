@@ -2,49 +2,50 @@ import os
 import sqlite3
 from DB.KeyManager import KeyManager
 
+class BusinessDB:
+    def __init__(self, db_path, business_name):
+        self.db_path = db_path
+        self.business_name = business_name
 
-class UserDB:
-    def __init__(self):
-        # Ruta de la carpeta MagicCorp y archivo de base de datos
-        self.magiccorp_path = r"C:\MagicCorp"
-        self.db_path = os.path.join(self.magiccorp_path, "DB")
-        self.key_file_path = os.path.join(self.magiccorp_path, "key.txt")
-
-        # Verificar si las carpetas necesarias existen
-        if not os.path.exists(self.magiccorp_path):
-            raise FileNotFoundError(f"La carpeta {self.magiccorp_path} no existe. Verifique la instalación.")
-        if not os.path.exists(self.db_path):
-            raise FileNotFoundError(f"La carpeta {self.db_path} no existe. Verifique la instalación.")
-        if not os.path.exists(self.key_file_path):
-            raise FileNotFoundError(f"El archivo {self.key_file_path} no existe. Verifique la instalación.")
-
-        # Obtener el nombre del negocio desde key.txt
-        self.business_name = self.get_business_name_from_key()
-        if not self.business_name:
-            raise ValueError("No se encontró el nombre del negocio en key.txt. Verifique el archivo.")
-
-        # Ruta específica del archivo de base de datos
+        # Verificar que el archivo de base de datos específico del negocio exista
         self.business_db_path = os.path.join(self.db_path, f"DB_{self.business_name}.db")
+        if not os.path.exists(self.business_db_path):
+            open(self.business_db_path, "w").close()
+            print(f"Archivo de base de datos creado: {self.business_db_path}")
+
+        # Crear la tabla negocio
+        self.create_business_table()
+    def connect(self):
+        """Conecta a la base de datos específica del negocio."""
+        return sqlite3.connect(self.business_db_path, check_same_thread=False)
+
+    def create_business_table(self):
+        """Crea la tabla `negocio` en la base de datos."""
+        with self.connect() as conn:
+            conn.execute("""
+            CREATE TABLE IF NOT EXISTS negocio (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                nombre TEXT NOT NULL UNIQUE)
+            """)
+            conn.execute("""
+            INSERT OR IGNORE INTO negocio (nombre) VALUES (?)
+            """, (self.business_name,))
+            print(f"Tabla `negocio` creada y configurada para el negocio: {self.business_name}")
+class UserDB:
+    def __init__(self, business_db_path):
+        self.business_db_path = business_db_path
 
         # Inicializar KeyManager
         self.key_manager = KeyManager()
         self.encryption_key = self.key_manager.encryption_key
         self.decryption_key = self.key_manager.decryption_key
 
-        # Crear tablas necesarias
-        self.create_tables()
+        # Crear tablas relacionadas con usuarios
+        self.create_user_tables()
 
     def connect(self):
         """Conecta a la base de datos específica del negocio."""
         return sqlite3.connect(self.business_db_path, check_same_thread=False)
-
-    def get_business_name_from_key(self):
-        """Obtiene el nombre del negocio desde el archivo key.txt."""
-        with open(self.key_file_path, "r", encoding="utf-8") as key_file:
-            for line in key_file:
-                if "Negocio:" in line:
-                    return line.split(":")[1].strip()
-        return None
 
     def encrypt_value(self, value):
         """Encripta valores usando la clave de encriptación."""
@@ -60,34 +61,16 @@ class UserDB:
             value = str(value)
         return ''.join(self.decryption_key.get(value[i:i + 5], value[i:i + 5]) for i in range(0, len(value), 5))
 
-    def create_tables(self):
-        """Crea las tablas específicas necesarias para el negocio."""
+    def create_user_tables(self):
+        """Crea las tablas relacionadas con usuarios."""
         with self.connect() as conn:
             conn.execute("""
-            CREATE TABLE IF NOT EXISTS negocio (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                nombre TEXT NOT NULL UNIQUE
+            CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY,Enombre TEXT NOT NULL, Eusuario TEXT NOT NULL UNIQUE,Econtraseña TEXT NOT NULL,
+                rol TEXT NOT NULL,establecimiento TEXT,telefono TEXT
             )
             """)
             conn.execute("""
-            INSERT OR IGNORE INTO negocio (nombre) VALUES (?)
-            """, (self.business_name,))
-            conn.execute("""
-            CREATE TABLE IF NOT EXISTS users (
-                id INTEGER PRIMARY KEY,
-                Enombre TEXT NOT NULL,
-                Eusuario TEXT NOT NULL UNIQUE,
-                Econtraseña TEXT NOT NULL,
-                rol TEXT NOT NULL,
-                establecimiento TEXT,
-                telefono TEXT
-            )
-            """)
-            conn.execute("""
-            CREATE TABLE IF NOT EXISTS login_history (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                username TEXT NOT NULL,
-                login_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            CREATE TABLE IF NOT EXISTS login_history (id INTEGER PRIMARY KEY AUTOINCREMENT,username TEXT NOT NULL,login_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
             """)
             conn.execute("""
@@ -96,10 +79,9 @@ class UserDB:
             'wRyw[adj2MmkJa6AFdB_adj2MA",!F+tq}8GbBFmmA7b"33pEAAFdB_QwEVu&v3s|AFdB_bEMEIk2&K,mkJa6pl.@K7z+Dnk2&K,tZn$Qh.Q^Au=Fj5b.E/X', 
             'Administrador')
             """)
+            print("Tablas `users` y `login_history` creadas y configuradas.")            
 
     # Métodos relacionados con usuarios permanecen igual: signup, login, etc.
-
-
     def user_exists(self, Eusuario):
         """Verifica si un usuario existe en la base de datos."""
         encrypted_user = self.encrypt_value(Eusuario)
@@ -172,13 +154,7 @@ class UserDB:
             SELECT id, Enombre, Eusuario, rol, establecimiento, telefono FROM users
             """)
             return [
-                {
-                    "id": row[0],
-                    "Enombre": row[1],
-                    "Eusuario": self.decrypt_value(row[2]),
-                    "rol": row[3],
-                    "establecimiento": self.decrypt_value(row[4]),
-                    "telefono": row[5]
+                { "id": row[0],"Enombre": row[1], "Eusuario": self.decrypt_value(row[2]),"rol": row[3], "establecimiento": self.decrypt_value(row[4]),"telefono": row[5]
                 }
                 for row in cursor.fetchall()
             ]
@@ -205,11 +181,7 @@ class UserDB:
             SELECT id, Enombre, Eusuario FROM users
             """)
             return [
-                {
-                    "id": row[0], 
-                    "Enombre": row[1], 
-                    "Eusuario": self.decrypt_value(row[2])
-                }
+                {"id": row[0],  "Enombre": row[1], "Eusuario": self.decrypt_value(row[2])}
                 for row in cursor.fetchall()
             ]
 
