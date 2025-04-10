@@ -42,22 +42,39 @@ class BusinessDB:
             print(f"Tabla `negocio` creada y configurada para el negocio: {self.business_name}")
             
 from DB.KeyManager import KeyManager
-
 class UserDB:
     def __init__(self, business_db_path):
         """Inicializa la clase UserDB con la ruta de la base de datos."""
         self.business_db_path = business_db_path
+
+        # Asegurarse de que la carpeta y el archivo de base de datos existen
+        self._prepare_database()
 
         # Inicializar KeyManager
         self.key_manager = KeyManager()
         self.encryption_key = self.key_manager.encryption_key
         self.decryption_key = self.key_manager.decryption_key
 
-        # Crear tablas relacionadas con usuarios
+        # Crear las tablas relacionadas con usuarios
         self.create_user_tables()
+
+    def _prepare_database(self):
+        """Crea la carpeta y el archivo de base de datos si no existen."""
+        # Asegurarse de que la carpeta para la base de datos exista
+        folder_path = os.path.dirname(self.business_db_path)
+        if not os.path.exists(folder_path):
+            os.makedirs(folder_path)
+            print(f"Carpeta creada: {folder_path}")
+
+        # Crear el archivo de base de datos si no existe
+        if not os.path.exists(self.business_db_path):
+            open(self.business_db_path, "w").close()
+            print(f"Archivo de base de datos creado: {self.business_db_path}")
 
     def connect(self):
         """Conecta a la base de datos."""
+        if not os.path.exists(self.business_db_path):
+            raise FileNotFoundError(f"El archivo de base de datos no existe: {self.business_db_path}")
         return sqlite3.connect(self.business_db_path, check_same_thread=False)
 
     def encrypt_value(self, value):
@@ -123,7 +140,14 @@ class UserDB:
             SELECT * FROM users WHERE Eusuario = ? AND Econtraseña = ?
             """, (encrypted_user, encrypted_password)).fetchone()
             return user is not None
-
+    def password_exists(self, password):
+        encrypted_password = self.encrypt_value(password)
+        with self.connect() as conn:
+            result = conn.execute("""
+            SELECT 1 FROM users WHERE Econtraseña = ?
+            """, (encrypted_password,)).fetchone()
+        return result is not None
+    
     def insert_login_history(self, username):
         """Inserta un registro en el historial de inicio de sesión."""
         with self.connect() as conn:

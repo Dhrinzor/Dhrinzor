@@ -5,22 +5,26 @@ import importlib
 from unit.authentication.login import LoginPage  # Asegúrate de que el path sea correcto
 from unit.authentication.signup import SignupPage  # Asegúrate de que el path sea correcto
 
+
 class MagicCorp:
-    def __init__(self, page: ft.Page):
-        self.page = page
+    def __init__(self):
         self.installation_path = r"C:\Program Files (x86)\The Magic Card"  # Ruta de instalación
         self.magiccorp_path = r"C:\MagicCorp"  # Ruta de la carpeta MagicCorp
         self.login_page = LoginPage(self)  # Instanciamos LoginPage al inicializar el programa
         self.signup_page = SignupPage(self)
-        
+
+    def main(self, page: ft.Page):
         # Configuración de la ventana
+        self.page = page
         self.page.expand = True
         self.page.padding = 0
-        self.page.vertical_alignment = "center"
-        self.page.horizontal_alignment = "center"
+        self.page.vertical_alignment = ft.MainAxisAlignment.CENTER
+        self.page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
         self.page.theme_mode = ft.ThemeMode.SYSTEM
-        self.page.window.maximized = True  # Maximiza la ventana al iniciarse
-        self.page.update()  # Aplica los cambios de la configuración
+        self.page.window_maximized = True  # Maximiza la ventana al iniciarse
+
+        # Verificar los contenidos requeridos
+        self.run()
 
     def run(self):
         # Ejecutar la sincronización en segundo plano
@@ -36,15 +40,19 @@ class MagicCorp:
 
     def _verify_magiccorp_contents(self):
         """Verifica si la carpeta MagicCorp contiene los archivos y subcarpetas necesarios."""
+        # Archivos requeridos
         required_files = [
             "key.txt",
             "license.txt",
             "sync_version.bat",
             "version.txt",
+            "test.txt",  # Nuevo archivo requerido
             "README.md",
             "install.nsi",
             "requirements.txt"
         ]
+
+        # Carpetas requeridas
         required_folders = [
             "DB",
             "src"
@@ -87,8 +95,11 @@ class MagicCorp:
 
     def _load_installation_page(self):
         # Método privado para cargar el módulo de instalación
-        install_module = importlib.import_module("unit.install")
-        install_module.InstallPage(self.page, self).show()  # Pasamos `self` como referencia al objeto principal
+        try:
+            install_module = importlib.import_module("unit.install")
+            install_module.InstallPage(self.page, self).show()  # Pasamos `self` como referencia al objeto principal
+        except Exception as e:
+            print(f"Error al cargar el módulo de instalación: {e}")
 
     def navigate(self, page_name):
         # Limpiar los controles actuales de la página
@@ -99,12 +110,13 @@ class MagicCorp:
             self.page.add(self.login_page.build())  # Agrega la estructura de LoginPage
         elif page_name == "signup":
             print("Navegando a la página de registro (signup)")
-            self.page.add(self.signup_page.build())  # Agrega la estructura de LoginPage
+            self.page.add(self.signup_page.build())  # Agrega la estructura de SignupPage
         elif page_name == "dashboard":
             print("Navegando al dashboard")
+            # Aquí se cargaría la página del dashboard
         else:
             print(f"Página desconocida: {page_name}")
-        
+
         # Actualizar la página con los nuevos controles
         self.page.update()
 
@@ -113,13 +125,9 @@ class MagicCorp:
         os._exit(0)  # Salida inmediata del programa
 
 
-def main(page: ft.Page):
-    app = MagicCorp(page)
-    app.run()  # Ejecuta la aplicación principal
-
-
 if __name__ == "__main__":
-    ft.app(target=main)
+    app = MagicCorp()
+    ft.app(target=app.main)
     
 # import flet as ft
 # import shutil

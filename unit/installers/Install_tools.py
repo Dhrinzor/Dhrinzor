@@ -13,169 +13,125 @@ class PageContent:
         self.app = app  # Referencia al objeto principal (`InstallPage`)
         self.selected_mode = None  # Variable para almacenar el modo seleccionado
 
-    def install_process(self):
-        # Verificar que se haya seleccionado un modo
-        if not self.selected_mode:
-            error_message.value = "Debe seleccionar un modo para continuar."
-            error_message.visible = True
-            self.page.update()
-            return
-
-        # Deshabilitar los radio botones para evitar cambios adicionales
-        for radio in mode_selector.content.controls:
-            radio.disabled = True
-            radio.label_style = ft.TextStyle(color=ft.colors.BLACK)  # Mantener el texto negro
-        mode_selector.update()  # Actualizar para reflejar el estado visual
-
-        # Ruta para las carpetas de destino
-        magiccorp_path = os.path.join("C:\\", "MagicCorp")
-        db_dest_path = os.path.join(magiccorp_path, "DB")
-
-        try:
-            # Inicializar variables de progreso
-            total_steps = 10  # Número total de pasos en el flujo
-            current_step = 0
-
-            def update_progress(message, add_to_list=True):
-                """Actualiza la barra de progreso y añade ítems al ListView con pausas controladas."""
-                nonlocal current_step
-                current_step += 1
-                pb.value = current_step / total_steps
-                if add_to_list:
-                    file_list.controls.append(ft.Text(message))
+        def install_process(self):
+            # Verificar que se haya seleccionado un modo
+            if not self.selected_mode:
+                error_message.value = "Debe seleccionar un modo para continuar."
+                error_message.visible = True
                 self.page.update()
-                time.sleep(0.2)  # Pausa más breve para acelerar pero mantener visualización en tiempo real
+                return
 
-            # # Crear carpetas necesarias
-            # if not os.path.exists(magiccorp_path):
-            #     os.mkdir(magiccorp_path)
-            #     update_progress("Creando carpeta principal MagicCorp...")
+            # Deshabilitar los radio botones para evitar cambios adicionales
+            for radio in mode_selector.content.controls:
+                radio.disabled = True
+                radio.label_style = ft.TextStyle(color=ft.colors.BLACK)  # Mantener el texto negro
+            mode_selector.update()  # Actualizar para reflejar el estado visual
 
-            # if not os.path.exists(db_dest_path):
-            #     os.mkdir(db_dest_path)
-            #     update_progress("Creando carpeta de bases de datos...")
+            # Ruta para las carpetas de destino
+            magiccorp_path = os.path.join("C:\\", "MagicCorp")
+            db_dest_path = os.path.join(magiccorp_path, "DB")
 
-            # Copiar archivos
-            files_to_copy = ["license.txt", "sync_version.bat", "version.txt", "test.txt", "README.md", "install.nsi", "requirements.txt"]
-            for file_name in files_to_copy:
-                source_path = os.path.join(os.getcwd(), file_name)
-                destination_path = os.path.join(magiccorp_path, file_name)
+            try:
+                # Inicializar variables de progreso
+                total_steps = 10  # Número total de pasos en el flujo
+                current_step = 0
 
-                if not os.path.exists(source_path):
+                def update_progress(message, add_to_list=True):
+                    """Actualiza la barra de progreso y añade ítems al ListView con pausas controladas."""
+                    nonlocal current_step
+                    current_step += 1
+                    pb.value = current_step / total_steps
+                    if add_to_list:
+                        file_list.controls.append(ft.Text(message))
+                    self.page.update()
+                    time.sleep(0.2)  # Pausa breve para visualizar el progreso
+
+                # Crear contenido para los archivos
+                file_contents = {
+                    "license.txt": """MagicCorp License Agreement\n\nAl utilizar este software, usted acepta los términos y condiciones establecidos por MagicCorp.\nEl uso no autorizado está estrictamente prohibido.""",
+                    "test.txt": """Pruebas y diagnósticos\n\nEste archivo se utiliza para verificar la integridad del programa y realizar pruebas necesarias.""",
+                    "README.md": """# MagicCorp\n\nEste README contiene información importante sobre la instalación y uso del programa.\nAsegúrese de leerlo detenidamente antes de proceder.""",
+                    "install.nsi": """!include "MUI2.nsh"\n\nSection "Install"\n  SetOutPath "$INSTDIR"\n  File "MagicCorp.exe"\nSectionEnd"""
+                }
+
+                # Crear archivos en C:\MagicCorp con el contenido especificado
+                for file_name, content in file_contents.items():
+                    destination_path = os.path.join(magiccorp_path, file_name)
+                    with open(destination_path, "w", encoding="utf-8") as file:
+                        file.write(content)
+                    update_progress(f"Archivo creado: {file_name}")
+
+                # Copiar carpeta src
+                src_path = os.path.join(os.getcwd(), "src")
+                destination_src_path = os.path.join(magiccorp_path, "src")
+
+                if not os.path.exists(src_path):
                     pb.value = 0
                     pb.color = ft.colors.RED
-                    success_message.value += f"Error: No se encontró el archivo '{file_name}'\n"
+                    success_message.value += "Error: No se encontró la carpeta 'src'\n"
                     self.page.update()
-                    raise FileNotFoundError(f"No se encontró el archivo '{file_name}' en la raíz local.")
+                    raise FileNotFoundError("No se encontró la carpeta 'src' en la raíz local.")
 
-                shutil.copy(source_path, destination_path)
-                update_progress(f"Archivo copiado: {file_name}")
+                shutil.copytree(src_path, destination_src_path, dirs_exist_ok=True)
+                update_progress("Carpeta src copiada con éxito.")
 
-            # Copiar carpeta src
-            src_path = os.path.join(os.getcwd(), "src")
-            destination_src_path = os.path.join(magiccorp_path, "src")
+                # Leer y actualizar el archivo key.txt
+                key_file_path = os.path.join(magiccorp_path, "key.txt")
+                if not os.path.exists(key_file_path):
+                    pb.value = 0
+                    pb.color = ft.colors.RED
+                    success_message.value += "Error: No se encontró el archivo key.txt\n"
+                    self.page.update()
+                    raise FileNotFoundError(f"No se encontró el archivo key.txt en {magiccorp_path}.")
+                
+                version_file_path = os.path.join(os.getcwd(), "version.txt")
+                if not os.path.exists(version_file_path):
+                    pb.value = 0
+                    pb.color = ft.colors.RED
+                    success_message.value += "Error: No se encontró el archivo version.txt\n"
+                    self.page.update()
+                    raise FileNotFoundError("No se encontró el archivo version.txt en la raíz local.")
 
-            if not os.path.exists(src_path):
+                # Leer la versión desde version.txt
+                with open(version_file_path, "r", encoding="utf-8") as version_file:
+                    version = version_file.read().strip()
+
+                # Actualizar el archivo key.txt
+                with open(key_file_path, "r+", encoding="utf-8") as key_file:
+                    content = key_file.readlines()
+                    for i, line in enumerate(content):
+                        if "Versión:" in line:
+                            content[i] = f"   Versión: {version}\n"
+                        if "Tipo de instalación:" in line:
+                            content[i] = f"   Tipo de instalación: {self.selected_mode}\n"
+                    key_file.seek(0)
+                    key_file.writelines(content)
+                    key_file.truncate()
+
+                update_progress("Archivo key.txt actualizado con éxito.")
+
+                # Finalización de la instalación
+                pb.value = 1.0  # Progreso completo
+                pb.color = ft.colors.GREEN
+                update_progress("¡Instalación completada exitosamente!", add_to_list=False)
+                success_message.value = "¡La instalación se realizó con éxito!"
+                success_message.visible = True
+                error_message.visible = False
+                install_button.visible = False
+                continue_button.visible = True
+                self.page.update()
+
+            except Exception as e:
                 pb.value = 0
                 pb.color = ft.colors.RED
-                success_message.value += "Error: No se encontró la carpeta 'src'\n"
+                success_message.value += "Error durante la instalación. Revise los detalles.\n"
                 self.page.update()
-                raise FileNotFoundError("No se encontró la carpeta 'src' en la raíz local.")
-
-            shutil.copytree(src_path, destination_src_path, dirs_exist_ok=True)
-            update_progress("Carpetas copiada con éxito.")
-
-            # Leer el nombre del negocio desde key.txt
-            key_file_path = os.path.join(magiccorp_path, "key.txt")
-            if not os.path.exists(key_file_path):
-                pb.value = 0
-                pb.color = ft.colors.RED
-                success_message.value += "Error: No se encontró el archivo key.txt\n"
+                error_message.value = f"Error: {str(e)}"
+                error_message.visible = True
+                success_message.visible = False
+                install_button.visible = True
+                continue_button.visible = False
                 self.page.update()
-                raise FileNotFoundError(f"No se encontró el archivo key.txt en {magiccorp_path}.")
-            
-            version_file_path = os.path.join(os.getcwd(), "version.txt")
-            if not os.path.exists(version_file_path):
-                pb.value = 0
-                pb.color = ft.colors.RED
-                success_message.value += "Error: No se encontró el archivo version.txt\n"
-                self.page.update()
-                raise FileNotFoundError("No se encontró el archivo version.txt en la raíz local.")
-
-            # Leer la versión desde version.txt
-            with open(version_file_path, "r", encoding="utf-8") as version_file:
-                version = version_file.read().strip()
-
-            # Actualizar el archivo key.txt
-            with open(key_file_path, "r+", encoding="utf-8") as key_file:
-                content = key_file.readlines()
-                for i, line in enumerate(content):
-                    if "Versión:" in line:
-                        content[i] = f"   Versión: {version}\n"
-                    if "Tipo de instalación:" in line:
-                        content[i] = f"   Tipo de instalación: {self.selected_mode}\n"
-                key_file.seek(0)
-                key_file.writelines(content)
-                key_file.truncate()
-
-            update_progress("Archivo key.txt actualizado con éxito.")
-            business_name = None
-            with open(key_file_path, "r", encoding="utf-8") as key_file:
-                for line in key_file:
-                    if "Negocio:" in line:
-                        business_name = line.split(":")[1].strip()
-                        break
-
-            if not business_name:
-                pb.value = 0
-                success_message.value += "Error: No se encontró el nombre del negocio en key.txt\n"
-                self.page.update()
-                raise ValueError("El archivo 'key.txt' no contiene un nombre válido para el negocio.")
-
-            business_db_path = os.path.join(db_dest_path, f"DB_{business_name}.db")
-
-            if not os.path.exists(business_db_path):
-                raise FileNotFoundError(f"No se encontró el archivo de base de datos: {business_db_path}")
-
-            # Configurar las tablas según el modo seleccionado
-            if self.selected_mode == "Local":
-                update_progress("Base de Datos para el modo 'Local'configurada con exito.")
-                db_local = DBLocal(business_name)
-                db_local.create_tables()
-            elif self.selected_mode == "Negocio":
-                update_progress("Base de Datos para el modo 'Negocio' configurada con exito.")
-                db_negocio = DBNegocio(business_db_path)
-                db_negocio.setup_negocio_tables()
-            elif self.selected_mode == "Local Independiente":
-                update_progress("Base de Datos para el modo 'Local Independiente'configurada con exito.")
-                db_local_independiente = DBLocalIndependiente(business_name)
-                db_local_independiente.setup_local_independent_tables()
-            else:
-                raise ValueError(f"Modo seleccionado '{self.selected_mode}' no válido.")
-
-            pb.value = 1.0  # Progreso completo
-            pb.color = ft.colors.GREEN
-            update_progress("¡Instalación completada exitosamente!", add_to_list=False)
-
-            # Mostrar mensaje final en success_message
-            success_message.value = "¡La instalación se realizó con éxito!"
-            success_message.visible = True
-            error_message.visible = False
-            install_button.visible = False
-            continue_button.visible = True
-            self.page.update()
-
-        except Exception as e:
-            pb.value = 0
-            pb.color = ft.colors.RED
-            success_message.value += "Error durante la instalación. Revise los detalles.\n"
-            self.page.update()
-            error_message.value = f"Error: {str(e)}"
-            error_message.visible = True
-            success_message.visible = False
-            install_button.visible = True
-            continue_button.visible = False
-            self.page.update()
               
     def proceed_to_next(self):
         # Actualizar el checkbox correspondiente en `InstallPage`

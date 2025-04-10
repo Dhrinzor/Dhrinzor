@@ -1,11 +1,22 @@
 import flet as ft
 import string
+import os
 from src.sizes import *
 from src.ccs import *
+from DB.db_setup import UserDB  # Importar la gestión de la base de datos
+
+# Importación de utilidades de colores y tamaños  
+from src.sizes import * 
+from src.ccs import *
+##############FIN DE LAS DEPENDENCIAS################  
+
 class SignupPage(ft.Control):
     def __init__(self, main_app):
         super().__init__()
         self.main_app = main_app
+         # Define la ruta del archivo de base de datos
+        self.business_db_path = os.path.join("C:\\", "MagicCorp", "DB", "DB_{business_name}.db")
+        self.dbuser = UserDB(self.business_db_path)  # Pasa la ruta de la base de datos como argumento
         # Define UI elements
         self.LTitulo = ft.Text('Registrarse', width=alto_letra, size=size_letra, weight='w900', color="white", text_align='center')
         self.imagen = ft.Image(src='src/Image/PNG/signup.png', width=foto_size)
@@ -66,7 +77,7 @@ class SignupPage(ft.Control):
             self.main_app.page.update()
 
     def validar_contraseña_autorizada(self, e):
-        if not self.main_app.dbuser.password_exists(self.EVpassword.value):
+        if not self.dbuser.password_exists(self.EVpassword.value):
             self.EVpassword.error_text = "¡Error! Contraseña autorizada no registrada."
             self.EVpassword.border_color = ft.colors.RED
         else:
@@ -127,7 +138,7 @@ class SignupPage(ft.Control):
         )
 
     def register(self, e):
-        if self.main_app.dbuser.user_exists(self.Eusuario.value):
+        if self.dbuser.user_exists(self.Eusuario.value):
             self.Eusuario.error_text = "¡Error! El usuario ya existe."
             self.Eusuario.border_color = ft.colors.RED  # Cambia el color del borde a rojo
             self.main_app.page.update()
@@ -145,14 +156,14 @@ class SignupPage(ft.Control):
             self.main_app.page.update()
             return
 
-        if not self.main_app.dbuser.password_exists(self.EVpassword.value):
+        if not self.dbuser.password_exists(self.EVpassword.value):
             self.EVpassword.error_text = "¡Error! Contraseña autorizada no registrada."
             self.EVpassword.border_color = ft.colors.RED
             self.main_app.page.update()
             return
 
         rol = "Administrador"
-        self.main_app.dbuser.signup(self.Enombre.value, self.Eusuario.value, self.Econtraseña.value, rol)
+        self.dbuser.signup(self.Enombre.value, self.Eusuario.value, self.Econtraseña.value, rol)
         self.Enombre.value = ""
         self.Eusuario.value = ""
         self.Econtraseña.value = ""

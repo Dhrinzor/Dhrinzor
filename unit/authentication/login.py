@@ -10,7 +10,6 @@ from src.sizes import *
 from src.ccs import *
 ##############FIN DE LAS DEPENDENCIAS################  
 
-
 class LoginPage(ft.Control):
     def __init__(self, main_app):
         super().__init__()
