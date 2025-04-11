@@ -80,22 +80,55 @@ class LoginPage(ft.Control):
         self.Econtraseña.update()
 
     def login(self, e):
-        business_name=self.recursivo.buscar_parametro(self.archivo, self.parametro)
-        # Define la ruta del archivo de base de datos
-        self.business_db_path = os.path.join("C:\\", "MagicCorp", "DB", "DB_"+business_name+".db")
-        self.dbuser = UserDB(self.business_db_path)  # Pasa la ruta de la base de datos como argumento
+        # Buscar el nombre del negocio desde el archivo key.txt usando Utils
+        try:
+            business_name = self.recursivo.buscar_parametro(self.archivo, self.parametro)
+            if not business_name:
+                raise ValueError("No se encontró el nombre del negocio en el archivo key.txt.")
+            print(f"Nombre del negocio encontrado: {business_name}")
+        except Exception as ex:
+            self.show_alert_dialog("ALvacios")
+            print(f"Error al obtener el nombre del negocio: {str(ex)}")
+            return
 
-        if self.dbuser.login(self.Eusuario.value, self.Econtraseña.value):
-            self.name = self.Eusuario.value
-            print("Welcome ")
-            self.show_loading_screen()
+        # Generar la ruta a la base de datos correspondiente
+        self.business_db_path = os.path.join("C:\\", "MagicCorp", "DB", f"DB_{business_name}.db")
+        
+        # Verificar si la base de datos existe
+        if not os.path.exists(self.business_db_path):
+            self.show_alert_dialog("ALvacios")
+            print(f"Error: No se encontró la base de datos para el negocio '{business_name}'.")
+            return
 
-            threading.Thread(target=self.dbuser.insert_login_history, args=(self.name,)).start()
-            
-            self.check_user_role()  # Verificar el rol del usuario
-        else:
-            self.Eusuario.value = ""
-            self.Econtraseña.value = ""
+        # Inicializar UserDB con la ruta de la base de datos
+        try:
+            self.dbuser = UserDB(self.business_db_path)  # Pasa la ruta de la base de datos como argumento
+        except Exception as ex:
+            self.show_alert_dialog("ALvacios")
+            print(f"Error al inicializar UserDB: {str(ex)}")
+            return
+
+        # Verificar si el usuario y la contraseña existen en la tabla `users`
+        try:
+            if self.dbuser.login(self.Eusuario.value, self.Econtraseña.value):  # Método login que valida credenciales
+                self.name = self.Eusuario.value
+                print(f"Bienvenido, {self.name}.")
+
+                # Mostrar pantalla de carga mientras se procesa el inicio de sesión
+                self.show_loading_screen()
+
+                # Registrar el historial de inicio de sesión en un hilo separado
+                threading.Thread(target=self.dbuser.insert_login_history, args=(self.name,)).start()
+
+                # Verificar el rol del usuario y proceder
+                self.check_user_role()
+            else:
+                # Credenciales inválidas
+                self.Eusuario.value = ""
+                self.Econtraseña.value = ""
+                self.show_alert_dialog("ALpassword")
+        except Exception as ex:
+            print(f"Error al validar el usuario: {str(ex)}")
             self.show_alert_dialog("ALpassword")
 
     def show_loading_screen(self):
