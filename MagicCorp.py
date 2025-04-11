@@ -4,13 +4,14 @@ import flet as ft
 import importlib
 from unit.authentication.login import LoginPage  # Asegúrate de que el path sea correcto
 from unit.authentication.signup import SignupPage  # Asegúrate de que el path sea correcto
-
+#from unit.dashboard.dashboard import DashboardPage
 class MainApp:
     def __init__(self):
         # Propiedades Globales
         self.page = None
         self.login_page = LoginPage(self)
         self.signup_page = SignupPage(self)
+        self.dashboard_page = None  # Inicializar después de que page esté disponible
         self.magiccorp_path = r"C:\MagicCorp"  # Ruta principal
         self.required_files = [  # Archivos necesarios
             "key.txt",
@@ -93,9 +94,10 @@ class MainApp:
             self.page.add(self.login_page.build())
         elif page_name == "signup":
             self.page.add(self.signup_page.build())
-        else:
-            print(f"Página desconocida: {page_name}")
-
+        elif page_name == "dashboard":
+            self.page.on_route_change = self.dashboard_page.route_change
+            self.page.add(self.dashboard_page.build(self.page))
+            self.dashboard_page.did_mount()
         self.page.update()
 
 

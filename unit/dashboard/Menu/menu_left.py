@@ -1,6 +1,8 @@
 import flet as ft
-from pages.authentication.utils.ccs import *
-from pages.authentication.utils.user import UserDB
+from src.sizes import * 
+from src.ccs import *
+from DB.db_setup import UserDB  # Importar la gestión de la base de datos
+from unit.globals.recursivo import Utils
 from datetime import datetime
 
 class Build_Menu_Left(ft.Control):
@@ -9,10 +11,14 @@ class Build_Menu_Left(ft.Control):
         self.page = page
         self.ccs = Ccs()
         self.db=UserDB()
+        self.utils=Utils()
         self.theme_switch = ft.Switch(label="Tema Oscuro",label_style=ft.TextStyle(color=ft.colors.BLUE_GREY if self.ccs.mode == "claro" else ft.colors.BLUE_ACCENT_100, font_family=self.ccs.alegrian, size=16), on_change=self.modify_file, value=(self.ccs.mode == "oscuro"))
         self.imagen=ft.Image( src='src/Image/PNG/DC.png',width=200)
-    
-    def get_last_login_user(self): 
+        self.archivo="key.txt"
+        self.parametro="Negocio:"
+    def get_last_login_user(self):
+        business_name = self.recursivo.buscar_parametro(self.archivo, self.parametro) 
+        self.business_db_path = os.path.join("C:\\", "MagicCorp", "DB", f"DB_{business_name}.db")
         return self.db.get_last_login_user() or "Usuario"
     
     def modify_file(self, e):
