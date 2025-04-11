@@ -87,26 +87,73 @@ class UserDB:
 
  
 
-    def create_user_tables(self):
-        """Crea las tablas relacionadas con usuarios."""
-        with self.connect() as conn:
+def create_user_tables(self, business_name):
+    """Crea las tablas relacionadas con usuarios según el tipo de negocio."""
+    with self.connect() as conn:
+        if business_name == "Local":
             conn.execute("""
-            CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY,Enombre TEXT NOT NULL, Eusuario TEXT NOT NULL UNIQUE,Econtraseña TEXT NOT NULL,
-                rol TEXT NOT NULL,establecimiento TEXT,telefono TEXT
+            CREATE TABLE IF NOT EXISTS users (
+                id INTEGER PRIMARY KEY,
+                Enombre TEXT NOT NULL,
+                Eusuario TEXT NOT NULL UNIQUE,
+                Econtraseña TEXT NOT NULL,
+                rol TEXT NOT NULL,
+                establecimiento TEXT,
+                telefono TEXT
             )
             """)
+        elif business_name == "Negocio":
             conn.execute("""
-            CREATE TABLE IF NOT EXISTS login_history (id INTEGER PRIMARY KEY AUTOINCREMENT,username TEXT NOT NULL,login_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            CREATE TABLE IF NOT EXISTS users (
+                id INTEGER PRIMARY KEY,
+                Enombre TEXT NOT NULL,
+                Eusuario TEXT NOT NULL UNIQUE,
+                Econtraseña TEXT NOT NULL
             )
             """)
+        elif business_name == "Local_Independiente":
+            conn.execute("""
+            CREATE TABLE IF NOT EXISTS users (
+                id INTEGER PRIMARY KEY,
+                Enombre TEXT NOT NULL,
+                Eusuario TEXT NOT NULL UNIQUE,
+                Econtraseña TEXT NOT NULL,
+                rol TEXT NOT NULL,
+                telefono TEXT
+            )
+            """)
+        # Tabla login_history permanece igual para todos los casos
+        conn.execute("""
+        CREATE TABLE IF NOT EXISTS login_history (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT NOT NULL,
+            login_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+        """)
+        
+        # Inserción condicional en tabla 'users'
+        if business_name == "Local":
             conn.execute("""
             INSERT OR IGNORE INTO users (Enombre, Eusuario, Econtraseña, rol) VALUES
             ('Administrador', 'fH}yc98&-`7z+DnsAN#63teZB',
-            'wRyw[adj2MmkJa6AFdB_adj2MA",!F+tq}8GbBFmmA7b"33pEAAFdB_QwEVu&v3s|AFdB_bEMEIk2&K,mkJa6pl.@K7z+Dnk2&K,tZn$Qh.Q^Au=Fj5b.E/X', 
+            'wRyw[adj2MmkJa6AFdB_adj2MA",!F+tq}8GbBFmmA7b"33pEAAFdB_QwEVu&v3s|AFdB_bEMEIk2&K,mkJa6pl.@K7z+Dnk2&K,tZn$Qh.Q^Au=Fj5b.E/X',
             'Administrador')
             """)
-            print("Tablas `users` y `login_history` creadas y configuradas.")            
-
+        elif business_name == "Negocio":
+            conn.execute("""
+            INSERT OR IGNORE INTO users (Enombre, Eusuario, Econtraseña) VALUES
+            ('Administrador', 'fH}yc98&-`7z+DnsAN#63teZB',
+            'wRyw[adj2MmkJa6AFdB_adj2MA",!F+tq}8GbBFmmA7b"33pEAAFdB_QwEVu&v3s|AFdB_bEMEIk2&K,mkJa6pl.@K7z+Dnk2&K,tZn$Qh.Q^Au=Fj5b.E/X')
+            """)
+        elif business_name == "Local_Independiente":
+            conn.execute("""
+            INSERT OR IGNORE INTO users (Enombre, Eusuario, Econtraseña, rol) VALUES
+            ('Administrador', 'fH}yc98&-`7z+DnsAN#63teZB',
+            'wRyw[adj2MmkJa6AFdB_adj2MA",!F+tq}8GbBFmmA7b"33pEAAFdB_QwEVu&v3s|AFdB_bEMEIk2&K,mkJa6pl.@K7z+Dnk2&K,tZn$Qh.Q^Au=Fj5b.E/X',
+            'Administrador')
+            """)
+        
+        print(f"Tablas `users` y `login_history` creadas y configuradas para el tipo de negocio: {business_name}.")
     # Métodos relacionados con usuarios permanecen igual: signup, login, etc.
     def user_exists(self, Eusuario):
         """Verifica si un usuario existe en la base de datos."""

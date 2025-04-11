@@ -50,3 +50,19 @@ class Utils:
 
         except Exception as ex:
             raise Exception(f"Error al buscar el parámetro '{parametro}' en {archivo}: {str(ex)}")
+    
+    def leer_nombre_negocio_desde_key():
+        """Lee el nombre del negocio desde el archivo key.txt."""
+        key_file_path = r"C:\MagicCorp\key.txt"
+        try:
+            if not os.path.exists(key_file_path):
+                raise FileNotFoundError(f"El archivo key.txt no existe en {key_file_path}.")
+            with open(key_file_path, "r", encoding="utf-8") as file:
+                for line in file:
+                    if "Negocio:" in line:
+                        return line.split(":")[1].strip()
+            raise ValueError("No se encontró el parámetro 'Negocio' en el archivo key.txt.")
+        except Exception as e:
+            print(f"Error al leer el nombre del negocio desde key.txt: {str(e)}")
+            return None
+
