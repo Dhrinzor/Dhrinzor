@@ -135,7 +135,7 @@ class PageContent:
                 update_progress("Base de Datos para el modo 'Local'configurada con exito.")
                 db_local = DBLocal(business_name)
                 db_local.create_tables()
-            elif self.selected_mode == "Negocio":
+            elif self.selected_mode == "Empresa":
                 update_progress("Base de Datos para el modo 'Negocio' configurada con exito.")
                 db_negocio = DBNegocio(business_db_path)
                 db_negocio.setup_negocio_tables()
@@ -231,8 +231,8 @@ class PageContent:
             content=ft.Column(
                 controls=[
                     ft.Radio(
-                        value="Negocio",
-                        label="Modo Negocio (Administrador del almacén principal)",
+                        value="Empresa",
+                        label="Modo Empresa (Administrador del almacén principal)",
                         label_style=ft.TextStyle(color=ft.colors.BLACK)  # Estilo del texto negro
                     ),
                     ft.Radio(

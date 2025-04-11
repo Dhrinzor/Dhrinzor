@@ -27,7 +27,7 @@ class DBNegocio:
 
     def setup_negocio_tables(self):
         """
-        Configura las tablas específicas del modo 'Negocio' en la base de datos existente.
+        Configura las tablas específicas del modo 'Empresa' en la base de datos existente.
         """
         try:
             conn = self.connect()

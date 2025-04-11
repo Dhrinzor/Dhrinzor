@@ -1,0 +1,24 @@
+git tag v1.0.15 
+git push origin v1.0.15  
+git pull origin main
+
+############SALIDA#################################
+PS D:\APP\the magic card program> git tag v1.0.15                                                                                                                                                                                    
+PS D:\APP\the magic card program> git push origin v1.0.15                                                                                                                                                                            
+Total 0 (delta 0), reused 0 (delta 0), pack-reused 0 (from 0)
+To https://github.com/Dhrinzor/Dhrinzor.git
+ * [new tag]         v1.0.15 -> v1.0.15
+PS D:\APP\the magic card program> git pull origin main                                                                                                                                                                               
+remote: Enumerating objects: 3, done.
+remote: Counting objects: 100% (3/3), done.
+remote: Total 3 (delta 1), reused 3 (delta 1), pack-reused 0 (from 0)
+Unpacking objects: 100% (3/3), 306 bytes | 21.00 KiB/s, done.
+From https://github.com/Dhrinzor/Dhrinzor
+ * branch            main       -> FETCH_HEAD
+   ec89dda..4617591  main       -> origin/main
+Updating ec89dda..4617591
+Fast-forward
+ version.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+PS D:\APP\the magic card program> 
+

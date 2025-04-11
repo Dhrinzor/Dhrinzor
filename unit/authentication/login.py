@@ -22,7 +22,7 @@ class LoginPage(ft.Control):
         self.list_alerts = {
             "ALpassword": "¡Error! Usuario o contraseña incorrecta.",
             "ALvacios": "¡Error! Existen campos vacíos.",
-            "ALexito": "¡Registro exitoso!"
+            "ALexito": "¡Registro exitoso!",
         }
 
     def build(self):  
@@ -104,9 +104,12 @@ class LoginPage(ft.Control):
         try:
             self.dbuser = UserDB(self.business_db_path)  # Pasa la ruta de la base de datos como argumento
         except Exception as ex:
-            self.show_alert_dialog("ALvacios")
-            print(f"Error al inicializar UserDB: {str(ex)}")
-            return
+            if not business_name:
+                self.show_alert_dialog("ALvacios")  # Mostrar alerta de campo vacío
+                #return
+                #self.show_alert_dialog("ALvacios")
+                print(f"Error al inicializar UserDB: {str(ex)}")
+                return
 
         # Verificar si el usuario y la contraseña existen en la tabla `users`
         try:
@@ -165,19 +168,43 @@ class LoginPage(ft.Control):
         #self.main_app.navigate("dashboard")
 
     def show_alert_dialog(self, key):
-        message = self.list_alerts[key]
-        self.main_app.page.dialog = ft.AlertDialog(
-            title=ft.Text("Error"),
-            content=ft.Text(message),
-            actions=[ft.TextButton(text="OK", on_click=self.close_dialog)],
-        )
-        self.main_app.page.dialog.open = True
-        self.main_app.page.update()
+        """Muestra un diálogo de alerta basado en el key especificado."""
+        try:
+            # Validar si el key existe en las alertas
+            if key not in self.list_alerts:
+                raise ValueError(f"La clave '{key}' no está definida en 'list_alerts'.")
+
+            # Verificar que la página esté inicializada
+            if self.main_app.page is None:
+                raise AttributeError("La página principal (main_app.page) no está inicializada correctamente.")
+
+            # Obtener el mensaje correspondiente al key
+            message = self.list_alerts[key]
+
+            # Configurar el diálogo de alerta
+            self.main_app.page.dialog = ft.AlertDialog(
+                title=ft.Text("Alerta", color=ft.colors.RED),
+                content=ft.Text(message, color=ft.colors.BLACK),
+                actions=[ft.TextButton(text="OK", on_click=self.close_dialog)],
+            )
+
+            # Abrir el diálogo y actualizar la página
+            self.main_app.page.dialog.open = True
+            self.main_app.page.update()
+
+        except AttributeError as ex:
+            print(f"Error: {str(ex)}. Asegúrate de que la página está correctamente inicializada.")
+        except Exception as ex:
+            print(f"Error al mostrar el diálogo de alerta: {str(ex)}")
 
     def close_dialog(self, e):
-        self.main_app.page.dialog.open = False
-        self.main_app.page.update()
-
+        """Cierra el diálogo de alerta."""
+        try:
+            self.main_app.page.dialog.open = False
+            self.main_app.page.update()
+        except Exception as ex:
+            print(f"Error al cerrar el diálogo: {str(ex)}")
+            
     def signup(self, e):
         self.main_app.navigate("signup")
 

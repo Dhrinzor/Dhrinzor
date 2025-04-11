@@ -4,7 +4,7 @@ import os
 from src.sizes import *
 from src.ccs import *
 from DB.db_setup import UserDB  # Importar la gestión de la base de datos
-
+from unit.globals.recursivo import Utils  # Importar la clase Utils
 # Importación de utilidades de colores y tamaños  
 from src.sizes import * 
 from src.ccs import *
@@ -17,6 +17,7 @@ class SignupPage(ft.Control):
          # Define la ruta del archivo de base de datos
         self.business_db_path = os.path.join("C:\\", "MagicCorp", "DB", "DB_{business_name}.db")
         self.dbuser = UserDB(self.business_db_path)  # Pasa la ruta de la base de datos como argumento
+        self.utils = Utils()  # Crear instancia de Utils
         # Define UI elements
         self.LTitulo = ft.Text('Registrarse', width=alto_letra, size=size_letra, weight='w900', color="white", text_align='center')
         self.imagen = ft.Image(src='src/Image/PNG/signup.png', width=foto_size)
@@ -77,14 +78,27 @@ class SignupPage(ft.Control):
             self.main_app.page.update()
 
     def validar_contraseña_autorizada(self, e):
-        if not self.dbuser.password_exists(self.EVpassword.value):
-            self.EVpassword.error_text = "¡Error! Contraseña autorizada no registrada."
-            self.EVpassword.border_color = ft.colors.RED
-        else:
-            self.EVpassword.error_text = None
-            self.EVpassword.border_color = ft.colors.GREEN
-        if self.page:
-            self.main_app.page.update()
+        try:
+            # Verificar si self.dbuser está inicializado
+            if not self.dbuser:
+                raise ValueError("La instancia de UserDB no está inicializada.")
+
+            # Validar la contraseña autorizada
+            if not self.dbuser.password_exists(self.EVpassword.value):
+                self.EVpassword.error_text = "¡Error! Contraseña autorizada no registrada."
+                self.EVpassword.border_color = ft.colors.RED
+            else:
+                self.EVpassword.error_text = None
+                self.EVpassword.border_color = ft.colors.GREEN
+        except FileNotFoundError as ex:
+            print(f"Archivo no encontrado: {ex}")
+            self.show_error_dialog(f"Archivo no encontrado: {str(ex)}")
+        except Exception as ex:
+            print(f"Error al validar la contraseña autorizada: {ex}")
+            self.show_error_dialog(f"Error: {str(ex)}")
+        finally:
+            if self.page:
+                self.main_app.page.update()
                
     def build(self):
         return ft.Container(   
@@ -140,25 +154,26 @@ class SignupPage(ft.Control):
     def register(self, e):
         # Buscar el nombre del negocio desde el archivo key.txt usando Utils
         try:
-            business_name = self.main_app.recursivo.buscar_parametro("key.txt", "Negocio")
+            business_name = self.utils.buscar_parametro("key.txt", "Negocio")
             if not business_name:
-                raise ValueError("No se encontró el nombre del negocio en el archivo key.txt.")
-            print(f"Nombre del negocio encontrado: {business_name}")
+                raise ValueError("No se pudo obtener el nombre del negocio desde el archivo key.txt.")
+            print(f"Negocio obtenido: {business_name}")
+            self.business_db_path = os.path.join("C:\\", "MagicCorp", "DB", f"DB_{business_name}.db")
         except Exception as ex:
             self.show_error_dialog(f"Error al obtener el nombre del negocio: {str(ex)}")
             return
 
         # Generar la ruta a la base de datos correspondiente
         self.business_db_path = os.path.join("C:\\", "MagicCorp", "DB", f"DB_{business_name}.db")
-        
+
         # Verificar si la base de datos existe
-        if not os.path.exists(self.business_db_path):
+        if not os.path.isfile(self.business_db_path):
             self.show_error_dialog(f"No se encontró la base de datos para el negocio '{business_name}'.")
             return
 
-        # Inicializar UserDB con la ruta de la base de datos
+        # Inicializar UserDB con la ruta de la base de datos existente
         try:
-            self.dbuser = UserDB(self.business_db_path)  # Inicializar con la base de datos existente
+            self.dbuser = UserDB(self.business_db_path)
         except Exception as ex:
             self.show_error_dialog(f"Error al inicializar UserDB: {str(ex)}")
             return
@@ -166,7 +181,7 @@ class SignupPage(ft.Control):
         # Verificar si el usuario ya existe
         if self.dbuser.user_exists(self.Eusuario.value):
             self.Eusuario.error_text = "¡Error! El usuario ya existe."
-            self.Eusuario.border_color = ft.colors.RED  # Cambiar el color del borde a rojo
+            self.Eusuario.border_color = ft.colors.RED
             self.main_app.page.update()
             return
 
@@ -188,8 +203,8 @@ class SignupPage(ft.Control):
             self.main_app.page.update()
             return
 
-        # Si todo es válido, registrar al usuario
-        rol = "Administrador"  # Puedes ajustar esto según el contexto
+        # Registrar al usuario si todo es válido
+        rol = "Administrador"  # Esto puede variar según las reglas de tu sistema
         try:
             self.dbuser.signup(self.Enombre.value, self.Eusuario.value, self.Econtraseña.value, rol)
             # Limpiar campos después del registro
@@ -199,10 +214,10 @@ class SignupPage(ft.Control):
             self.Econfirm_password.value = ""
             self.EVpassword.value = ""
             self.show_error_dialog("¡Registro exitoso!")
-            self.main_app.navigate("login")  # Redirigir al login
+            self.main_app.navigate("login")  # Redirigir a la página de login
         except Exception as ex:
             self.show_error_dialog(f"Error al registrar al usuario: {str(ex)}")
-
+        
     def close_dialog(self, e):
         self.main_app.page.dialog.open = False
         self.main_app.page.update()

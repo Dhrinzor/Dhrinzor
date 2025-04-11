@@ -67,14 +67,16 @@ class UserDB:
             print(f"Archivo de base de datos creado: {self.business_db_path}")
 
     def connect(self):
-        """Conecta a la base de datos."""
-        self.prepare_database()  # Asegurarse de que la base de datos exista antes de conectarse
+        """Conecta a la base de datos existente, validando su existencia antes."""
+        if not os.path.isfile(self.business_db_path):
+            raise FileNotFoundError(f"La base de datos '{self.business_db_path}' no existe. Verifica la instalación.")
+
         try:
             conn = sqlite3.connect(self.business_db_path, check_same_thread=False)
             print(f"Conexión exitosa a la base de datos: {self.business_db_path}")
             return conn
         except sqlite3.Error as e:
-            raise ConnectionError(f"Error al conectar a la base de datos: {str(e)}")
+            raise ConnectionError(f"Error al conectar a la base de datos: {str(e)}")    
         
     def encrypt_value(self, value):
         """Encripta valores usando la clave de encriptación."""
@@ -95,7 +97,7 @@ class UserDB:
         if not installation_type:
             raise ValueError("El parámetro `installation_type` está vacío. No se pueden crear tablas.")
 
-        valid_modes = ["Local", "Negocio", "Local_Independiente"]
+        valid_modes = ["Local", "Empresa", "Local_Independiente"]
         if installation_type not in valid_modes:
             raise ValueError(f"Tipo de instalación: '{installation_type}' no válido. Modos válidos: {valid_modes}")
 
@@ -118,7 +120,7 @@ class UserDB:
                 ('Administrador', 'fH}yc98&-`7z+DnsAN#63teZB', 
                 'wRyw[adj2MmkJa6AFdB_adj2MA",!F+tq}8GbBFmmA7b"33pEAAFdB_QwEVu&v3s|AFdB_bEMEIk2&K,mkJa6pl.@K7z+Dnk2&K,tZn$Qh.Q^Au=Fj5b.E/X', 'Administrador')
                 """)
-            elif installation_type == "Negocio":
+            elif installation_type == "Empresa":
                 conn.execute("""
                 CREATE TABLE IF NOT EXISTS users (
                     id INTEGER PRIMARY KEY,

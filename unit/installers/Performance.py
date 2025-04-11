@@ -51,7 +51,7 @@ class PageContent:
             print(f"Error al crear las tablas de usuario: {str(e)}")
 
         # Tomar acción según el tipo de instalación
-        if self.modo == "Negocio":
+        if self.modo == "Empresa":
             print("Redirigiendo a la página de inicio de sesión...")
             self.app.navigate("login")  # Navegar al login usando el método principal
         else:
