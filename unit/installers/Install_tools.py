@@ -5,7 +5,6 @@ import flet as ft
 from DB.DB_Negocio import DBNegocio  # Importar la gestión de la base de datos
 from DB.DB_Local_Independiente import DBLocalIndependiente  # Importar la gestión de la base de datos
 from DB.DB_Local import DBLocal  # Importar la gestión de la base de datos
-from DB.db_setup import UserDB  # Importar la gestión de la base de datos
 from unit.globals.recursivo import Utils
 
 class PageContent:
@@ -130,22 +129,19 @@ class PageContent:
 
             if not os.path.exists(business_db_path):
                 raise FileNotFoundError(f"No se encontró el archivo de base de datos: {business_db_path}")
-            self.user=UserDB(business_db_path)
+
             # Configurar las tablas según el modo seleccionado
             if self.selected_mode == "Local":
                 update_progress("Base de Datos para el modo 'Local'configurada con exito.")
                 db_local = DBLocal(business_name)
-                self.user.create_user_tables(business_name)
                 db_local.create_tables()
             elif self.selected_mode == "Negocio":
                 update_progress("Base de Datos para el modo 'Negocio' configurada con exito.")
                 db_negocio = DBNegocio(business_db_path)
-                self.user.create_user_tables(business_name)
                 db_negocio.setup_negocio_tables()
             elif self.selected_mode == "Local Independiente":
                 update_progress("Base de Datos para el modo 'Local Independiente'configurada con exito.")
-                db_local_independiente = DBLocalIndependiente(business_name)
-                
+                db_local_independiente = DBLocalIndependiente(business_db_path)
                 db_local_independiente.setup_local_independent_tables()
             else:
                 raise ValueError(f"Modo seleccionado '{self.selected_mode}' no válido.")

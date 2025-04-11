@@ -1,6 +1,7 @@
 import os
 import flet as ft
-
+from unit.globals.recursivo import Utils  # Importar la clase Utils
+from DB.db_setup import UserDB  # Importar la clase UserDB
 class PageContent:
     def __init__(self, page, navigate_to, app):
         self.page = page
@@ -9,6 +10,8 @@ class PageContent:
         self.modo = None  # Variable para almacenar el tipo de instalación
 
     def _finalize(self, event):
+        utils = Utils()  # Crear instancia de Utils
+
         # Revisar si se seleccionó "Crear acceso directo"
         if create_shortcut_checkbox.value:
             print("Creando acceso directo en el escritorio...")
@@ -26,25 +29,26 @@ class PageContent:
         else:
             print("El usuario decidió no crear el acceso directo.")
 
-        # Leer el tipo de instalación desde key.txt
-        key_file_path = r"C:\MagicCorp\key.txt"
+        # Buscar el tipo de instalación usando Utils.buscar_parametro
         try:
-            if not os.path.exists(key_file_path):
-                self.modo = "Versión desconocida"
-                print("El archivo key.txt no existe en la ruta especificada.")
-            else:
-                with open(key_file_path, "r", encoding="utf-8") as file:
-                    for line in file:
-                        if "Tipo de instalación:" in line:
-                            self.modo = line.split(":")[1].strip()
-                            print(f"Tipo de instalación leído: {self.modo}")
-                            break
-                    else:
-                        self.modo = "No especificado"
-                        print("No se encontró 'Tipo de instalación' en key.txt.")
+            self.modo = utils.buscar_parametro("key.txt", "Tipo de instalación")
+            if not self.modo:
+                raise ValueError("El archivo 'key.txt' no contiene un tipo de instalación válido.")
+            print(f"Tipo de instalación leído: {self.modo}")
         except Exception as e:
-            print(f"Error al leer el archivo key.txt: {str(e)}")
+            print(f"Error al obtener el tipo de instalación: {str(e)}")
             self.modo = "Error"
+
+        # Obtener la ruta de la base de datos existente desde `install_tools.py`
+        db_dest_path = r"C:\MagicCorp\DB"
+        existing_db_path = os.path.join(db_dest_path, f"DB_{utils.buscar_parametro('key.txt', 'Negocio')}.db")  # Usar nombre de la base creada en install_tools.py
+
+        try:
+            user_db = UserDB(existing_db_path)  # Reutilizar la base de datos existente
+            user_db.create_user_tables(self.modo)  # Crear tablas según el tipo de instalación
+            print(f"Tablas de usuario creadas exitosamente en la base de datos: {existing_db_path}")
+        except Exception as e:
+            print(f"Error al crear las tablas de usuario: {str(e)}")
 
         # Tomar acción según el tipo de instalación
         if self.modo == "Negocio":
@@ -58,7 +62,7 @@ class PageContent:
         finalize_button.disabled = True
         final_message.value = "¡Instalación completada con éxito! Gracias por confiar en MagicCorp."
         self.page.update()
-
+    
     def show(self):
         global finalize_button, create_shortcut_checkbox, final_message
 

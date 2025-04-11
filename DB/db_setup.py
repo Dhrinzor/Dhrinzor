@@ -69,8 +69,13 @@ class UserDB:
     def connect(self):
         """Conecta a la base de datos."""
         self.prepare_database()  # Asegurarse de que la base de datos exista antes de conectarse
-        return sqlite3.connect(self.business_db_path, check_same_thread=False)
-
+        try:
+            conn = sqlite3.connect(self.business_db_path, check_same_thread=False)
+            print(f"Conexión exitosa a la base de datos: {self.business_db_path}")
+            return conn
+        except sqlite3.Error as e:
+            raise ConnectionError(f"Error al conectar a la base de datos: {str(e)}")
+        
     def encrypt_value(self, value):
         """Encripta valores usando la clave de encriptación."""
         if value == "DEPÓSITO":
@@ -85,75 +90,78 @@ class UserDB:
             value = str(value)
         return ''.join(self.decryption_key.get(value[i:i + 5], value[i:i + 5]) for i in range(0, len(value), 5))
 
- 
+    def create_user_tables(self, installation_type):
+        """Crea las tablas relacionadas con usuarios según el tipo de instalación."""
+        if not installation_type:
+            raise ValueError("El parámetro `installation_type` está vacío. No se pueden crear tablas.")
 
-def create_user_tables(self, business_name):
-    """Crea las tablas relacionadas con usuarios según el tipo de negocio."""
-    with self.connect() as conn:
-        if business_name == "Local":
+        valid_modes = ["Local", "Negocio", "Local_Independiente"]
+        if installation_type not in valid_modes:
+            raise ValueError(f"Tipo de instalación: '{installation_type}' no válido. Modos válidos: {valid_modes}")
+
+        # Crear las tablas según el tipo de instalación
+        with self.connect() as conn:
+            if installation_type == "Local":
+                conn.execute("""
+                CREATE TABLE IF NOT EXISTS users (
+                    id INTEGER PRIMARY KEY,
+                    Enombre TEXT NOT NULL,
+                    Eusuario TEXT NOT NULL UNIQUE,
+                    Econtraseña TEXT NOT NULL,
+                    rol TEXT NOT NULL,
+                    establecimiento TEXT,
+                    telefono TEXT
+                )
+                """)
+                conn.execute("""
+                INSERT OR IGNORE INTO users (Enombre, Eusuario, Econtraseña, rol) VALUES
+                ('Administrador', 'fH}yc98&-`7z+DnsAN#63teZB', 
+                'wRyw[adj2MmkJa6AFdB_adj2MA",!F+tq}8GbBFmmA7b"33pEAAFdB_QwEVu&v3s|AFdB_bEMEIk2&K,mkJa6pl.@K7z+Dnk2&K,tZn$Qh.Q^Au=Fj5b.E/X', 'Administrador')
+                """)
+            elif installation_type == "Negocio":
+                conn.execute("""
+                CREATE TABLE IF NOT EXISTS users (
+                    id INTEGER PRIMARY KEY,
+                    Enombre TEXT NOT NULL,
+                    Eusuario TEXT NOT NULL UNIQUE,
+                    Econtraseña TEXT NOT NULL,
+                    rol TEXT NOT NULL,
+                    establecimiento TEXT,
+                    telefono TEXT
+                )
+                """)
+                conn.execute("""
+                INSERT OR IGNORE INTO users (Enombre, Eusuario, Econtraseña, rol) VALUES
+                ('Administrador', 'fH}yc98&-`7z+DnsAN#63teZB', 
+                'wRyw[adj2MmkJa6AFdB_adj2MA",!F+tq}8GbBFmmA7b"33pEAAFdB_QwEVu&v3s|AFdB_bEMEIk2&K,mkJa6pl.@K7z+Dnk2&K,tZn$Qh.Q^Au=Fj5b.E/X', 'Administrador')
+                """)
+            elif installation_type == "Local_Independiente":
+                conn.execute("""
+                CREATE TABLE IF NOT EXISTS users (
+                    id INTEGER PRIMARY KEY,
+                    Enombre TEXT NOT NULL,
+                    Eusuario TEXT NOT NULL UNIQUE,
+                    Econtraseña TEXT NOT NULL,
+                    rol TEXT NOT NULL,
+                    telefono TEXT
+                )
+                """)
+                conn.execute("""
+                INSERT OR IGNORE INTO users (Enombre, Eusuario, Econtraseña, rol) VALUES
+                ('Administrador', 'fH}yc98&-`7z+DnsAN#63teZB', 
+                'wRyw[adj2MmkJa6AFdB_adj2MA",!F+tq}8GbBFmmA7b"33pEAAFdB_QwEVu&v3s|AFdB_bEMEIk2&K,mkJa6pl.@K7z+Dnk2&K,tZn$Qh.Q^Au=Fj5b.E/X', 'Administrador')
+                """)
+
+            # Crear tabla `login_history` que es común para todos los casos
             conn.execute("""
-            CREATE TABLE IF NOT EXISTS users (
-                id INTEGER PRIMARY KEY,
-                Enombre TEXT NOT NULL,
-                Eusuario TEXT NOT NULL UNIQUE,
-                Econtraseña TEXT NOT NULL,
-                rol TEXT NOT NULL,
-                establecimiento TEXT,
-                telefono TEXT
+            CREATE TABLE IF NOT EXISTS login_history (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                username TEXT NOT NULL,
+                login_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
             """)
-        elif business_name == "Negocio":
-            conn.execute("""
-            CREATE TABLE IF NOT EXISTS users (
-                id INTEGER PRIMARY KEY,
-                Enombre TEXT NOT NULL,
-                Eusuario TEXT NOT NULL UNIQUE,
-                Econtraseña TEXT NOT NULL
-            )
-            """)
-        elif business_name == "Local_Independiente":
-            conn.execute("""
-            CREATE TABLE IF NOT EXISTS users (
-                id INTEGER PRIMARY KEY,
-                Enombre TEXT NOT NULL,
-                Eusuario TEXT NOT NULL UNIQUE,
-                Econtraseña TEXT NOT NULL,
-                rol TEXT NOT NULL,
-                telefono TEXT
-            )
-            """)
-        # Tabla login_history permanece igual para todos los casos
-        conn.execute("""
-        CREATE TABLE IF NOT EXISTS login_history (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            username TEXT NOT NULL,
-            login_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )
-        """)
-        
-        # Inserción condicional en tabla 'users'
-        if business_name == "Local":
-            conn.execute("""
-            INSERT OR IGNORE INTO users (Enombre, Eusuario, Econtraseña, rol) VALUES
-            ('Administrador', 'fH}yc98&-`7z+DnsAN#63teZB',
-            'wRyw[adj2MmkJa6AFdB_adj2MA",!F+tq}8GbBFmmA7b"33pEAAFdB_QwEVu&v3s|AFdB_bEMEIk2&K,mkJa6pl.@K7z+Dnk2&K,tZn$Qh.Q^Au=Fj5b.E/X',
-            'Administrador')
-            """)
-        elif business_name == "Negocio":
-            conn.execute("""
-            INSERT OR IGNORE INTO users (Enombre, Eusuario, Econtraseña) VALUES
-            ('Administrador', 'fH}yc98&-`7z+DnsAN#63teZB',
-            'wRyw[adj2MmkJa6AFdB_adj2MA",!F+tq}8GbBFmmA7b"33pEAAFdB_QwEVu&v3s|AFdB_bEMEIk2&K,mkJa6pl.@K7z+Dnk2&K,tZn$Qh.Q^Au=Fj5b.E/X')
-            """)
-        elif business_name == "Local_Independiente":
-            conn.execute("""
-            INSERT OR IGNORE INTO users (Enombre, Eusuario, Econtraseña, rol) VALUES
-            ('Administrador', 'fH}yc98&-`7z+DnsAN#63teZB',
-            'wRyw[adj2MmkJa6AFdB_adj2MA",!F+tq}8GbBFmmA7b"33pEAAFdB_QwEVu&v3s|AFdB_bEMEIk2&K,mkJa6pl.@K7z+Dnk2&K,tZn$Qh.Q^Au=Fj5b.E/X',
-            'Administrador')
-            """)
-        
-        print(f"Tablas `users` y `login_history` creadas y configuradas para el tipo de negocio: {business_name}.")
+
+            
     # Métodos relacionados con usuarios permanecen igual: signup, login, etc.
     def user_exists(self, Eusuario):
         """Verifica si un usuario existe en la base de datos."""

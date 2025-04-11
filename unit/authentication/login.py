@@ -3,6 +3,7 @@ import threading
 import os
 import time
 from DB.db_setup import UserDB  # Importar la gestión de la base de datos
+from unit.globals.recursivo import Utils
 #from unit.dashboard.dashboard import DashboardPage  # Importar DashboardPage
 
 # Importación de utilidades de colores y tamaños  
@@ -14,10 +15,9 @@ class LoginPage(ft.Control):
     def __init__(self, main_app):
         super().__init__()
         self.main_app = main_app
-
-        # Define la ruta del archivo de base de datos
-        self.business_db_path = os.path.join("C:\\", "MagicCorp", "DB", "DB_{business_name}.db")
-        self.dbuser = UserDB(self.business_db_path)  # Pasa la ruta de la base de datos como argumento
+        self.recursivo = Utils()
+        self.archivo="key.txt"
+        self.parametro="Negocio:"
 
         self.list_alerts = {
             "ALpassword": "¡Error! Usuario o contraseña incorrecta.",
@@ -80,8 +80,14 @@ class LoginPage(ft.Control):
         self.Econtraseña.update()
 
     def login(self, e):
+        business_name=self.recursivo.buscar_parametro(self.archivo, self.parametro)
+        # Define la ruta del archivo de base de datos
+        self.business_db_path = os.path.join("C:\\", "MagicCorp", "DB", "DB_"+business_name+".db")
+        self.dbuser = UserDB(self.business_db_path)  # Pasa la ruta de la base de datos como argumento
+
         if self.dbuser.login(self.Eusuario.value, self.Econtraseña.value):
             self.name = self.Eusuario.value
+            print("Welcome ")
             self.show_loading_screen()
 
             threading.Thread(target=self.dbuser.insert_login_history, args=(self.name,)).start()
