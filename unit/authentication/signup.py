@@ -138,39 +138,70 @@ class SignupPage(ft.Control):
         )
 
     def register(self, e):
+        # Buscar el nombre del negocio desde el archivo key.txt usando Utils
+        try:
+            business_name = self.main_app.recursivo.buscar_parametro("key.txt", "Negocio")
+            if not business_name:
+                raise ValueError("No se encontró el nombre del negocio en el archivo key.txt.")
+            print(f"Nombre del negocio encontrado: {business_name}")
+        except Exception as ex:
+            self.show_error_dialog(f"Error al obtener el nombre del negocio: {str(ex)}")
+            return
+
+        # Generar la ruta a la base de datos correspondiente
+        self.business_db_path = os.path.join("C:\\", "MagicCorp", "DB", f"DB_{business_name}.db")
+        
+        # Verificar si la base de datos existe
+        if not os.path.exists(self.business_db_path):
+            self.show_error_dialog(f"No se encontró la base de datos para el negocio '{business_name}'.")
+            return
+
+        # Inicializar UserDB con la ruta de la base de datos
+        try:
+            self.dbuser = UserDB(self.business_db_path)  # Inicializar con la base de datos existente
+        except Exception as ex:
+            self.show_error_dialog(f"Error al inicializar UserDB: {str(ex)}")
+            return
+
+        # Verificar si el usuario ya existe
         if self.dbuser.user_exists(self.Eusuario.value):
             self.Eusuario.error_text = "¡Error! El usuario ya existe."
-            self.Eusuario.border_color = ft.colors.RED  # Cambia el color del borde a rojo
+            self.Eusuario.border_color = ft.colors.RED  # Cambiar el color del borde a rojo
             self.main_app.page.update()
             return
 
+        # Validar la contraseña ingresada
         self.validar_contraseña(None)
-
         if self.Econtraseña.error_text:
             self.main_app.page.update()
             return
 
+        # Validar confirmación de contraseña
         self.validar_confirmacion_contraseña(None)
-
         if self.Econfirm_password.error_text:
             self.main_app.page.update()
             return
 
-        if not self.dbuser.password_exists(self.EVpassword.value):
-            self.EVpassword.error_text = "¡Error! Contraseña autorizada no registrada."
-            self.EVpassword.border_color = ft.colors.RED
+        # Validar la contraseña autorizada
+        self.validar_contraseña_autorizada(None)
+        if self.EVpassword.error_text:
             self.main_app.page.update()
             return
 
-        rol = "Administrador"
-        self.dbuser.signup(self.Enombre.value, self.Eusuario.value, self.Econtraseña.value, rol)
-        self.Enombre.value = ""
-        self.Eusuario.value = ""
-        self.Econtraseña.value = ""
-        self.Econfirm_password.value = ""
-        self.EVpassword.value = ""
-        self.show_error_dialog("¡Registro exitoso!")
-        self.main_app.navigate("login")
+        # Si todo es válido, registrar al usuario
+        rol = "Administrador"  # Puedes ajustar esto según el contexto
+        try:
+            self.dbuser.signup(self.Enombre.value, self.Eusuario.value, self.Econtraseña.value, rol)
+            # Limpiar campos después del registro
+            self.Enombre.value = ""
+            self.Eusuario.value = ""
+            self.Econtraseña.value = ""
+            self.Econfirm_password.value = ""
+            self.EVpassword.value = ""
+            self.show_error_dialog("¡Registro exitoso!")
+            self.main_app.navigate("login")  # Redirigir al login
+        except Exception as ex:
+            self.show_error_dialog(f"Error al registrar al usuario: {str(ex)}")
 
     def close_dialog(self, e):
         self.main_app.page.dialog.open = False
